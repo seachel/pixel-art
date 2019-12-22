@@ -40,7 +40,6 @@ function onKeyDown_doc(e : KeyboardEvent)
 	// if correct key pressed and match selection is off, turn on
 	if (e.keyCode === 83 && !isMatchSelection)
 	{
-		write("pressed s; event is " + e.type + ", " + e.target);
 		swapMatchMode();
 	}
 }
@@ -58,7 +57,6 @@ function onKeyUp_doc(e : KeyboardEvent)
 	// if correct key released and match selection is on, turn off
 	if (e.keyCode === 83 && isMatchSelection)
 	{
-		write("pressed s; event is " + e.type + ", " + e.target);
 		swapMatchMode();
 	}
 }
