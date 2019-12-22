@@ -1,42 +1,117 @@
-// Function to change the content of t2
-function applyBrush(e : Event)
+/*
+TODO:
+- set brush to selection
+  * hold another button as part of the event?
+  * keydown changes state for certain keys?
+- apply selection elsewhere in pattern while mouse down?
+- select and drag to move? or copy?
+- export to PDF
+
+Notes:
+
+- need assignment of brush to update UI elements
+*/
+
+// match brush mode
+let isMatchSelection : boolean = false;
+
+// if match selection mode is on, then don't colour selected square but instead set the brush to its colour
+
+// Test event functions
+class SwitcherThing
+{
+	values = ["red", "green", "yellow"];
+	index : number;
+
+	constructor()
+	{
+		this.index = 0;
+	}
+
+	next()
+	{
+		let result = this.values[this.index];
+
+		if (this.index == this.values.length - 1)
+		{
+			this.index = 0;
+		}
+		else
+		{
+			this.index++;
+		}
+
+		return result;
+	}
+}
+
+let myThing = new SwitcherThing();
+
+function setBackground()
+{
+	let newBackgroundColour = myThing.next();
+
+	document.getElementById("project-body").style.background = newBackgroundColour;
+}
+
+function swapMatchMode()
+{
+	isMatchSelection = !isMatchSelection;
+}
+
+document.getElementById("match-brush").addEventListener("click", swapMatchMode, false);
+
+
+// Function to apply the brush to the passed event's target
+function onCellClick(e : Event)
 {
 	var targetElement = <HTMLElement>e.target;
-	targetElement.style.background = brush;
+
+	if (isMatchSelection)
+	{
+		setBrush(targetElement.style.background);
+	}
+	else
+	{
+		applyBrush(targetElement);
+	}
+}
+
+function applyBrush(cell : HTMLElement)
+{
+	cell.style.background = currentBrush;
+}
+
+function setBrush(brush : string)
+{
+	currentBrush = brush;
+	const currentBox = document.getElementById("current");
+	currentBox.style.background = brush;
 }
 
 // Add event listener to cells
 const cells = document.getElementsByClassName("pattern_cell");
 for (var i = 0; i < cells.length; i++)
 {
-	cells[i].addEventListener("click", applyBrush, false);
+	cells[i].addEventListener("click", onCellClick, false);
 }
 
 // document.body.textContent = "Hallo Chelsea";
 
 // build brush
-var brush = "white";
+var currentBrush = "white";
 
 // hook handlers to pallet items
 function makeCurrentBlue() {
-	const currentBox = document.getElementById("current")
-	currentBox.firstChild.nodeValue = "blue"
-	currentBox.style.background = "blue";
-	brush = "blue";
+	setBrush("blue");
 }
 
 function makeCurrentGreen() {
-	const currentBox = document.getElementById("current")
-	currentBox.firstChild.nodeValue = "green"
-	currentBox.style.background = "green";
-	brush = "green";
+	setBrush("green");
 }
 
 function makeCurrentPurple() {
-	const currentBox = document.getElementById("current")
-	currentBox.firstChild.nodeValue = "purple"
-	currentBox.style.background = "purple";
-	brush = "purple";
+	setBrush("rgb(169, 84, 255)");
 }
 
 const element_blue = document.getElementById("blue");
