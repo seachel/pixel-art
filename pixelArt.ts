@@ -20,7 +20,7 @@ let isMatchSelection : boolean = false;
 // Test event functions
 class SwitcherThing
 {
-	values = ["red", "green", "yellow"];
+	values = ["red", "green"];
 	index : number;
 
 	constructor()
@@ -56,7 +56,22 @@ function setBackground()
 
 function swapMatchMode()
 {
-	isMatchSelection = !isMatchSelection;
+	let brushControl = document.getElementById("match-brush");
+
+	if (isMatchSelection)
+	{
+		// turn it off and change UI as necessary
+		isMatchSelection = false;
+
+		brushControl.style.background = "white";
+	}
+	else
+	{
+		// turn it on and change UI as necessary
+		isMatchSelection = true;
+
+		brushControl.style.background = "yellow";
+	}
 }
 
 document.getElementById("match-brush").addEventListener("click", swapMatchMode, false);
