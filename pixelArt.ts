@@ -2,57 +2,71 @@
 TODO:
 - set brush to selection
   * hold another button as part of the event?
-  * keydown changes state for certain keys?
+  * keydown changes state for certain keys? (cmd)
+  * state change using button
 - apply selection elsewhere in pattern while mouse down?
-- select and drag to move? or copy?
+- select and drag to move? or copy? (later)
 - export to PDF
+  * need to have representation of pattern; do this after refactor?
+  * write the table to pdf
+  * save the file as another file type?
+  * way to make different file type openable, or will use app?
+- redo at some point (after pushing this as far as possible?)
 
 Notes:
 
 - need assignment of brush to update UI elements
+- bug: if key down when page refreshed, then swapping modes will be offset; need to refresh everything again?
+- bug: keeps firing events when button held?
+
 */
+
 
 // match brush mode
 let isMatchSelection : boolean = false;
 
 // if match selection mode is on, then don't colour selected square but instead set the brush to its colour
 
-// Test event functions
-class SwitcherThing
+function onKeyDown_doc(e : KeyboardEvent)
 {
-	values = ["red", "green"];
-	index : number;
-
-	constructor()
+	// First block below is for bug causing firing during IME composition; update: nope?
+	if (e.isComposing || e.keyCode === 229)
 	{
-		this.index = 0;
+		write("is composing.");
+		return;
 	}
 
-	next()
+	// see keycode.info for more
+	// if correct key pressed and match selection is off, turn on
+	if (e.keyCode === 83 && !isMatchSelection)
 	{
-		let result = this.values[this.index];
-
-		if (this.index == this.values.length - 1)
-		{
-			this.index = 0;
-		}
-		else
-		{
-			this.index++;
-		}
-
-		return result;
+		write("pressed s; event is " + e.type + ", " + e.target);
+		swapMatchMode();
 	}
 }
 
-let myThing = new SwitcherThing();
-
-function setBackground()
+function onKeyUp_doc(e : KeyboardEvent)
 {
-	let newBackgroundColour = myThing.next();
+	// First block below is for bug causing firing during IME composition; update: nope?
+	if (e.isComposing || e.keyCode === 229)
+	{
+		write("is composing.");
+		return;
+	}
 
-	document.getElementById("project-body").style.background = newBackgroundColour;
+	// see keycode.info for more
+	// if correct key released and match selection is on, turn off
+	if (e.keyCode === 83 && isMatchSelection)
+	{
+		write("pressed s; event is " + e.type + ", " + e.target);
+		swapMatchMode();
+	}
 }
+
+
+window.addEventListener("keydown", onKeyDown_doc, false);
+window.addEventListener("keyup", onKeyUp_doc, false);
+
 
 function swapMatchMode()
 {
@@ -136,3 +150,9 @@ const elementPurple = document.getElementById("purple");
 element_blue.addEventListener("click", makeCurrentBlue);
 elementGreen.addEventListener("click", makeCurrentGreen);
 elementPurple.addEventListener("click", makeCurrentPurple);
+
+function write(thingToWrite : string)
+{
+	let dumpElement = document.getElementById("dump");
+	dumpElement.textContent += "\n" + thingToWrite;
+}
