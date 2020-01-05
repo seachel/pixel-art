@@ -1,9 +1,9 @@
 /*
 TODO:
 - set brush to selection
-  * hold another button as part of the event?
-  * keydown changes state for certain keys? (cmd)
-  * state change using button
+  * hold another button as part of the event? (done)
+  * keydown changes state for certain keys? (done)
+  * state change using button (done)
 - apply selection elsewhere in pattern while mouse down?
 - select and drag to move? or copy? (later)
 - export to PDF
@@ -17,9 +17,50 @@ Notes:
 
 - need assignment of brush to update UI elements
 - bug: if key down when page refreshed, then swapping modes will be offset; need to refresh everything again?
-- bug: keeps firing events when button held?
+- bug: keeps firing events when button held? (keyup and keydown)
 
 */
+
+// -*-*-*-*-*-*-*-*-*-
+// Model
+// -*-*-*-*-*-*-*-*-*-
+
+// TODO:
+// objects to represent:
+// - pattern (a grid of cells)
+// - cell (a structure with a string for colour for now, later more)
+
+const defaultColour : string = "white";
+
+class Pattern
+{
+	cells : string[][];
+
+	// set all cells to default value?
+
+	constructor(width : number, height : number)
+	{
+		// grid is column of rows, so
+		//   outer loop goes along/down the column
+		//   the inner loop goes across each row
+
+		let cells : string[][] = [];
+
+		for (let i = 0; i < height; i++)
+		{
+			let row : string[] = [];
+
+			for (let j = 0; j < width; j++)
+			{
+				row.push(defaultColour);
+			}
+
+			cells.push(row);
+		}
+
+		this.cells = cells;
+	}
+}
 
 
 // match brush mode
