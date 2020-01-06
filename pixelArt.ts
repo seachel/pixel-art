@@ -13,6 +13,16 @@ TODO:
   * way to make different file type openable, or will use app?
 - redo at some point (after pushing this as far as possible?)
 
+Questions:
+
+- when getting info from html element, cast
+- best ways to link model and view? events fire when a thing is changed? pattern to follow?
+  * updating cell should update model automatically
+  * function to initialize and another to handle updates?
+- best way to interface between js, css, and html? how to store class names, ids, etc
+- bad to have a different style for each cell?
+
+
 Notes:
 
 - need assignment of brush to update UI elements
@@ -31,6 +41,7 @@ Notes:
 // - cell (a structure with a string for colour for now, later more)
 
 const defaultColour : string = "white";
+let displayPattern : Pattern;
 
 class Pattern
 {
@@ -38,7 +49,7 @@ class Pattern
 
 	// set all cells to default value?
 
-	constructor(width : number, height : number)
+	constructor(height : number, width : number)
 	{
 		// grid is column of rows, so
 		//   outer loop goes along/down the column
@@ -60,6 +71,75 @@ class Pattern
 
 		this.cells = cells;
 	}
+}
+
+function initializePattern()
+{
+	// Get elements containing dimension inputs and assign to input element type
+	let patternHeightInputElement = <HTMLInputElement> document.getElementById("grid-height");
+	let patternWidthInputElement = (<HTMLInputElement>document.getElementById("grid-width"));
+
+	// Get input values as strings
+	let patternHeightInput : string = patternHeightInputElement.value;
+	let patternWidthInput : string = patternWidthInputElement.value;
+
+	// Check pattern dimension values are numbers
+	if (isNaN(Number(patternHeightInput)))
+	{
+		// TODO: update error once handled another way
+		console.log("Pattern height input is not a number")
+	}
+	else if (isNaN(Number(patternWidthInput)))
+	{
+		// TODO: update error once handled another way
+		console.log("Pattern width input is not a number")
+	}
+	else
+	{
+		let patternHeight : number = Number(patternHeightInput);
+		let patternWidth : number = Number(patternWidthInput);
+
+		displayPattern = new Pattern(patternHeight, patternWidth)
+
+		// TODO: make sure when a new pattern is generated, the old styles don't persist
+		// use regex to search for and delete all cell styles?
+		// keep separate file for cell styles related to design?
+
+		// write pattern HTML
+		let patternContainer = document.getElementById("pattern-container")
+		patternContainer.innerHTML = getPatternHTML(patternHeight, patternWidth);
+	}
+}
+
+function getPatternHTML(height : number, width : number) : string
+{
+	// get element where the pattern will be written
+	// build the text for that element
+	let patternHTML = `<table id="tbl_pattern">
+	`;
+
+	for (let i = 0; i < height; i++)
+	{
+		patternHTML += `<tr>
+		`;
+
+		for (let j = 0; j < width; j++)
+		{
+			patternHTML += `<td id="row${i}-col${j}" class="pattern_cell">
+			-
+			</td>
+			`;
+			// Note: "-" is temp content for cell
+		}
+
+		patternHTML += `</tr>
+		`;
+	}
+
+	patternHTML += `</table>
+	`;
+
+	return patternHTML;
 }
 
 
@@ -195,3 +275,6 @@ function write(thingToWrite : string)
 	let dumpElement = document.getElementById("dump");
 	dumpElement.textContent += "\n" + thingToWrite;
 }
+
+const button_makePattern = document.getElementById("btn_make-grid");
+button_makePattern.addEventListener("click", initializePattern);
