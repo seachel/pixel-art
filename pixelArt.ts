@@ -31,6 +31,23 @@ Notes:
 
 */
 
+// Below is an interface for id and class names shared between HTML, TS/JS, and CSS
+// Only use the fields in name in this file for easier referencing and renaming later
+// If changing any of the strings, be sure they are also updated in the TS and CSS files
+var names =
+{
+	currentBrush: "current-brush",
+	isMatchBrush: "is-match-brush",
+	patternHeight: "pattern-height",
+	patternWidth: "pattern-width",
+	patternGrid: "table_pattern",
+	patternCellName: "pattern-cell",
+	patternContainer: "pattern-container",
+	button_createPattern: "btn_make-grid"
+}
+
+// TODO: wrap defaults
+
 // -*-*-*-*-*-*-*-*-*-
 // Model
 // -*-*-*-*-*-*-*-*-*-
@@ -76,8 +93,8 @@ class Pattern
 function initializePattern()
 {
 	// Get elements containing dimension inputs and assign to input element type
-	let patternHeightInputElement = <HTMLInputElement> document.getElementById("grid-height");
-	let patternWidthInputElement = (<HTMLInputElement>document.getElementById("grid-width"));
+	let patternHeightInputElement = <HTMLInputElement> document.getElementById(names.patternHeight);
+	let patternWidthInputElement = (<HTMLInputElement>document.getElementById(names.patternWidth));
 
 	// Get input values as strings
 	let patternHeightInput : string = patternHeightInputElement.value;
@@ -106,7 +123,7 @@ function initializePattern()
 		// keep separate file for cell styles related to design?
 
 		// write pattern HTML
-		let patternContainer = document.getElementById("pattern-container")
+		let patternContainer = document.getElementById(names.patternContainer)
 		patternContainer.innerHTML = getPatternHTML(patternHeight, patternWidth);
 
 		handleCellClick();
@@ -116,7 +133,7 @@ function initializePattern()
 function handleCellClick()
 {
 	// Add event listener to cells
-	const cells = document.getElementsByClassName("pattern-cell");
+	const cells = document.getElementsByClassName(names.patternCellName);
 	for (var i = 0; i < cells.length; i++)
 	{
 		cells[i].addEventListener("click", onCellClick, false);
@@ -127,7 +144,7 @@ function getPatternHTML(height : number, width : number) : string
 {
 	// get element where the pattern will be written
 	// build the text for that element
-	let patternHTML = `<table id="table_pattern">
+	let patternHTML = `<table id="${names.patternGrid}">
 	`;
 
 	for (let i = 0; i < height; i++)
@@ -137,7 +154,7 @@ function getPatternHTML(height : number, width : number) : string
 
 		for (let j = 0; j < width; j++)
 		{
-			patternHTML += `<td id="row${i}-col${j}" class="pattern-cell">
+			patternHTML += `<td id="row${i}-col${j}" class="${names.patternCellName}">
 			-
 			</td>
 			`;
@@ -201,7 +218,7 @@ window.addEventListener("keyup", onKeyUp_doc, false);
 
 function swapMatchMode()
 {
-	let brushControl = document.getElementById("match-brush");
+	let brushControl = document.getElementById(names.isMatchBrush);
 
 	if (isMatchSelection)
 	{
@@ -219,7 +236,7 @@ function swapMatchMode()
 	}
 }
 
-document.getElementById("match-brush").addEventListener("click", swapMatchMode, false);
+document.getElementById(names.isMatchBrush).addEventListener("click", swapMatchMode, false);
 
 
 // Function to apply the brush to the passed event's target
@@ -245,7 +262,7 @@ function applyBrush(cell : HTMLElement)
 function setBrush(brush : string)
 {
 	currentBrush = brush;
-	const currentBox = document.getElementById("current");
+	const currentBox = document.getElementById(names.currentBrush);
 	currentBox.style.background = brush;
 }
 
@@ -280,13 +297,13 @@ function write(thingToWrite : string)
 	dumpElement.textContent += "\n" + thingToWrite;
 }
 
-const button_makePattern = document.getElementById("btn_make-grid");
+const button_makePattern = document.getElementById(names.button_createPattern);
 button_makePattern.addEventListener("click", initializePattern);
 
 (function initPage()
 {
-	(<HTMLInputElement> document.getElementById("grid-width")).value = "3";
-	(<HTMLInputElement> document.getElementById("grid-height")).value = "3";
+	(<HTMLInputElement> document.getElementById(names.patternWidth)).value = "3";
+	(<HTMLInputElement> document.getElementById(names.patternHeight)).value = "3";
 
 	initializePattern();
 })();
