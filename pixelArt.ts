@@ -115,7 +115,7 @@ function getPatternHTML(height : number, width : number) : string
 {
 	// get element where the pattern will be written
 	// build the text for that element
-	let patternHTML = `<table id="tbl_pattern">
+	let patternHTML = `<table id="table_pattern">
 	`;
 
 	for (let i = 0; i < height; i++)
@@ -125,7 +125,7 @@ function getPatternHTML(height : number, width : number) : string
 
 		for (let j = 0; j < width; j++)
 		{
-			patternHTML += `<td id="row${i}-col${j}" class="pattern_cell">
+			patternHTML += `<td id="row${i}-col${j}" class="pattern-cell">
 			-
 			</td>
 			`;
@@ -270,6 +270,7 @@ element_blue.addEventListener("click", makeCurrentBlue);
 elementGreen.addEventListener("click", makeCurrentGreen);
 elementPurple.addEventListener("click", makeCurrentPurple);
 
+// Note: used for testing
 function write(thingToWrite : string)
 {
 	let dumpElement = document.getElementById("dump");
@@ -278,3 +279,11 @@ function write(thingToWrite : string)
 
 const button_makePattern = document.getElementById("btn_make-grid");
 button_makePattern.addEventListener("click", initializePattern);
+
+(function initPage()
+{
+	(<HTMLInputElement> document.getElementById("grid-width")).value = "3";
+	(<HTMLInputElement> document.getElementById("grid-height")).value = "3";
+
+	initializePattern();
+})();

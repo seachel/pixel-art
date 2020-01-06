@@ -2,7 +2,7 @@ body {
 	/* background: green; */
 }
 
-#pattern, #palette
+#pattern-container, #palette
 {
 	margin: 100px 10px;
 }
@@ -10,3 +10,17 @@ body {
 #blue { background: rgb(68, 68, 211); }
 #green { background: forestgreen; }
 #purple { background: rgb(169, 84, 255); }
+
+.pattern-cell
+{
+	width: 15px;
+	height: 15px;
+	text-align: center;
+	vertical-align: center;
+	border: 1px solid black;
+}
+
+#table_pattern
+{
+	border-collapse: collapse;
+}
