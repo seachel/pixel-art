@@ -108,6 +108,18 @@ function initializePattern()
 		// write pattern HTML
 		let patternContainer = document.getElementById("pattern-container")
 		patternContainer.innerHTML = getPatternHTML(patternHeight, patternWidth);
+
+		handleCellClick();
+	}
+}
+
+function handleCellClick()
+{
+	// Add event listener to cells
+	const cells = document.getElementsByClassName("pattern-cell");
+	for (var i = 0; i < cells.length; i++)
+	{
+		cells[i].addEventListener("click", onCellClick, false);
 	}
 }
 
@@ -236,15 +248,6 @@ function setBrush(brush : string)
 	const currentBox = document.getElementById("current");
 	currentBox.style.background = brush;
 }
-
-// Add event listener to cells
-const cells = document.getElementsByClassName("pattern_cell");
-for (var i = 0; i < cells.length; i++)
-{
-	cells[i].addEventListener("click", onCellClick, false);
-}
-
-// document.body.textContent = "Hallo Chelsea";
 
 // build brush
 var currentBrush = "white";
