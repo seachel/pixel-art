@@ -21,6 +21,7 @@ Questions:
   * function to initialize and another to handle updates?
 - best way to interface between js, css, and html? how to store class names, ids, etc
 - bad to have a different style for each cell?
+- how to open the page from VS Code?
 
 
 Notes:
@@ -47,6 +48,13 @@ var names =
 }
 
 // TODO: wrap defaults
+var defaults =
+{
+	cellColour: "white",
+	patternHeight: "3",
+	patternWidth: "3",
+	cellId: (row : number, column : number) => `row${row}-col${column}`
+}
 
 // -*-*-*-*-*-*-*-*-*-
 // Model
@@ -57,7 +65,7 @@ var names =
 // - pattern (a grid of cells)
 // - cell (a structure with a string for colour for now, later more)
 
-const defaultColour : string = "white";
+const defaultColour : string = defaults.cellColour;
 let displayPattern : Pattern;
 
 class Pattern
@@ -154,7 +162,7 @@ function getPatternHTML(height : number, width : number) : string
 
 		for (let j = 0; j < width; j++)
 		{
-			patternHTML += `<td id="row${i}-col${j}" class="${names.patternCellName}">
+			patternHTML += `<td id="${defaults.cellId(i,j)}" class="${names.patternCellName}">
 			-
 			</td>
 			`;
@@ -225,7 +233,7 @@ function swapMatchMode()
 		// turn it off and change UI as necessary
 		isMatchSelection = false;
 
-		brushControl.style.background = "white";
+		brushControl.style.background = defaults.cellColour;
 	}
 	else
 	{
@@ -267,7 +275,7 @@ function setBrush(brush : string)
 }
 
 // build brush
-var currentBrush = "white";
+var currentBrush = defaults.cellColour;
 
 // hook handlers to pallet items
 function makeCurrentBlue() {
@@ -302,8 +310,8 @@ button_makePattern.addEventListener("click", initializePattern);
 
 (function initPage()
 {
-	(<HTMLInputElement> document.getElementById(names.patternWidth)).value = "3";
-	(<HTMLInputElement> document.getElementById(names.patternHeight)).value = "3";
+	(<HTMLInputElement> document.getElementById(names.patternHeight)).value = defaults.patternHeight;
+	(<HTMLInputElement> document.getElementById(names.patternWidth)).value = defaults.patternWidth;
 
 	initializePattern();
 })();
