@@ -60,19 +60,11 @@ var defaults =
 // Model
 // -*-*-*-*-*-*-*-*-*-
 
-// TODO:
-// objects to represent:
-// - pattern (a grid of cells)
-// - cell (a structure with a string for colour for now, later more)
-
-const defaultColour : string = defaults.cellColour;
 let displayPattern : Pattern;
 
 class Pattern
 {
 	cells : string[][];
-
-	// set all cells to default value?
 
 	constructor(height : number, width : number)
 	{
@@ -88,7 +80,7 @@ class Pattern
 
 			for (let j = 0; j < width; j++)
 			{
-				row.push(defaultColour);
+				row.push(defaults.cellColour);
 			}
 
 			cells.push(row);
@@ -112,12 +104,12 @@ function initializePattern()
 	if (isNaN(Number(patternHeightInput)))
 	{
 		// TODO: update error once handled another way
-		console.log("Pattern height input is not a number")
+		console.log("Pattern height input is not a number.")
 	}
 	else if (isNaN(Number(patternWidthInput)))
 	{
 		// TODO: update error once handled another way
-		console.log("Pattern width input is not a number")
+		console.log("Pattern width input is not a number.")
 	}
 	else
 	{
@@ -265,6 +257,33 @@ function onCellClick(e : Event)
 function applyBrush(cell : HTMLElement)
 {
 	cell.style.background = currentBrush;
+
+	// Q: since I can set the background of the cell, do I need to make styles for each cell?
+	// TODO: update model
+	// TODO: extract row and column to get grid coordinates? is there a better way?
+	//cell.id
+	let matchExpression = /row(\d+)-col(\d+)/g;
+	let idString = cell.id;
+
+	// let matches = idString.matchAll(matchExpression);
+	// TODO: figure out why below works and above does not
+	// TODO: figure out why matchAll works in regex testing site but match works in Safari console
+	//let matches = idString['matchAll'](matchExpression);
+	let matches = matchExpression.exec(idString);
+	//let matches = idString['match'](matchExpression);
+
+	let rowIndex = Number(matches[1]);
+	let colIndex = Number(matches[2]);
+
+	// Check that row and column indices are numbers and something hasn't gone wrong with the match
+	if (isNaN(rowIndex) || isNaN(colIndex))
+	{
+		console.log("Bad news! One of the indices to update is not a number!");
+	}
+
+	// Update the model
+	// TODO: once the brush represents more than just a string of the colour, below will need to be updated
+	displayPattern.cells[rowIndex][colIndex] = currentBrush;
 }
 
 function setBrush(brush : string)
