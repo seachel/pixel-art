@@ -43,8 +43,11 @@ var names =
 	patternWidth: "pattern-width",
 	patternGrid: "table_pattern",
 	patternCellName: "pattern-cell",
-	patternContainer: "pattern-container",
-	button_createPattern: "btn_make-grid"
+	button_createPattern: "btn_make-grid",
+	appContainer: "app-content",
+	region_settings: "region-settings",
+	region_pattern: "region-pattern",
+	region_brush: "region-brush"
 }
 
 // TODO: wrap defaults
@@ -123,7 +126,7 @@ function initializePattern()
 		// keep separate file for cell styles related to design?
 
 		// write pattern HTML
-		let patternContainer = document.getElementById(names.patternContainer)
+		let patternContainer = document.getElementById(names.region_pattern)
 		patternContainer.innerHTML = getPatternHTML(patternHeight, patternWidth);
 
 		handleCellClick();

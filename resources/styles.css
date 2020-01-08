@@ -1,6 +1,38 @@
-#pattern-container, #palette
+HTML, body
+{
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+}
+
+#palette
 {
 	margin: 100px 10px;
+}
+
+#app-content
+{
+	display: flex;
+	justify-content: space-between;
+}
+
+#region-settings
+{
+	background: rgb(245, 151, 151);
+}
+
+#region-pattern
+{
+	background: rgb(255, 255, 164);
+	flex-grow: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#region-brush
+{
+	background: rgb(215, 171, 242);
 }
 
 #blue { background: rgb(68, 68, 211); }
