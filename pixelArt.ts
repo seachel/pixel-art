@@ -23,6 +23,7 @@ Questions:
 - best way to interface between js, css, and html? how to store class names, ids, etc
 - bad to have a different style for each cell?
 - how to open the page from VS Code?
+- when styles added to an HTML element here, are they put in the html, or a css file? (I think the former?)
 
 
 Notes:
@@ -121,6 +122,36 @@ class Pattern
 	}
 }
 
+function applyBrush(cell : HTMLElement)
+{
+	cell.style.background = currentState.brush;
+
+	// regular expression to match the coordinates from a cell id
+	let matchExpression = /row(\d+)-col(\d+)/g;
+	let matches = matchExpression.exec(cell.id);
+
+	// extract the grid coordinates from the match above
+	let rowIndex = Number(matches[1]);
+	let colIndex = Number(matches[2]);
+
+	// Check that row and column indices are numbers and something hasn't gone wrong with the match
+	if (isNaN(rowIndex) || isNaN(colIndex))
+	{
+		console.log("Bad news! One of the indices to update is not a number!");
+	}
+
+	// set the brush of the corresponding cell in the model to current brush
+	currentState.displayPattern.cells[rowIndex][colIndex] = currentState.brush;
+}
+
+function setBrush(brush : string)
+{
+	currentState.brush = brush;
+	const currentBox = document.getElementById(names.currentBrush);
+	currentBox.style.background = brush;
+}
+
+
 function initializePattern()
 {
 	// Get elements containing dimension inputs and assign to input element type
@@ -148,10 +179,6 @@ function initializePattern()
 		let patternWidth : number = Number(patternWidthInput);
 
 		currentState.displayPattern = new Pattern(patternHeight, patternWidth)
-
-		// TODO: make sure when a new pattern is generated, the old styles don't persist
-		// use regex to search for and delete all cell styles?
-		// keep separate file for cell styles related to design?
 
 		// write pattern HTML
 		let patternContainer = document.getElementById(names.region_pattern)
@@ -204,7 +231,6 @@ function getPatternHTML(height : number, width : number) : string
 
 
 // if match selection mode is on, then don't colour selected square but instead set the brush to its colour
-
 function onKeyDown_doc(e : KeyboardEvent)
 {
 	// First block below is for bug causing firing during IME composition; update: nope?
@@ -275,46 +301,8 @@ function onCellClick(e : Event)
 	}
 }
 
-function applyBrush(cell : HTMLElement)
-{
-	cell.style.background = currentState.brush;
 
-	// Q: since I can set the background of the cell, do I need to make styles for each cell?
-	// TODO: update model
-	// TODO: extract row and column to get grid coordinates? is there a better way?
-	//cell.id
-	let matchExpression = /row(\d+)-col(\d+)/g;
-	let idString = cell.id;
-
-	// let matches = idString.matchAll(matchExpression);
-	// TODO: figure out why below works and above does not
-	// TODO: figure out why matchAll works in regex testing site but match works in Safari console
-	//let matches = idString['matchAll'](matchExpression);
-	let matches = matchExpression.exec(idString);
-	//let matches = idString['match'](matchExpression);
-
-	let rowIndex = Number(matches[1]);
-	let colIndex = Number(matches[2]);
-
-	// Check that row and column indices are numbers and something hasn't gone wrong with the match
-	if (isNaN(rowIndex) || isNaN(colIndex))
-	{
-		console.log("Bad news! One of the indices to update is not a number!");
-	}
-
-	// Update the model
-	// TODO: once the brush represents more than just a string of the colour, below will need to be updated
-	currentState.displayPattern.cells[rowIndex][colIndex] = currentState.brush;
-}
-
-function setBrush(brush : string)
-{
-	currentState.brush = brush;
-	const currentBox = document.getElementById(names.currentBrush);
-	currentBox.style.background = brush;
-}
-
-// hook handlers to pallet items
+// Temp: hook handlers to pallet items
 function makeCurrentBlue() {
 	setBrush("blue");
 }
