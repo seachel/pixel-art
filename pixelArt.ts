@@ -14,6 +14,7 @@ TODO:
 - redo at some point (after pushing this as far as possible?)
 - move apply and set brush functions to the program state?
 - build assertions library
+- check defaults in initialization?
 
 Questions:
 
@@ -25,6 +26,11 @@ Questions:
 - bad to have a different style for each cell?
 - how to open the page from VS Code?
 - when styles added to an HTML element here, are they put in the html, or a css file? (I think the former?)
+- using conditions/assertions the way I am is silly because trying to access properties of a null object will cause the same error already?
+  * not necessarily the case when passing and manipulating strings; some unintended values may get through?
+  * correction: silent failure without checks
+- what to do about redundant assertion checks?
+  * restrict to pre- and post-conditions?
 
 
 Notes:
@@ -40,20 +46,49 @@ Notes:
 
 // Use the assertions below to create pre-conditions, post-conditions, or any other assertions where breaking execution is the preferred behaviour when not true
 // How to know when to use: consider it whenever creating a new variable
+// use isNum check on string before using `Number` function to get more information
 const condition =
 {
 	isEqual: (checkVal1, checkVal2) =>
 	{
 		if (checkVal1 !== checkVal2)
 		{
-			throwIt(`${checkVal1} != ${checkVal2}`);
+			throwIt(`${checkVal1} != ${checkVal2}.`);
 		}
 	},
 	isNum: (checkVal : any) =>
 	{
 		if (isNaN(Number(checkVal)))
 		{
-			throwIt(`${checkVal} is not a number`);
+			throwIt(`${checkVal} is not a number.`);
+		}
+	},
+	isNotNull: (checkVal : any) =>
+	{
+		if (checkVal === null)
+		{
+			throwIt(`${checkVal} is null.`)
+		}
+	},
+	isNotUndefined: (checkVal : any) =>
+	{
+		if (checkVal === undefined)
+		{
+			throwIt(`${checkVal} is undefined.`)
+		}
+	},
+	isNonempty: (checkArray : Array<any>) =>
+	{
+		if (checkArray.length === 0)
+		{
+			throwIt(`${checkArray} is an empty array.`)
+		}
+	},
+	hasLength: (checkArray : Array<any>, length : number) =>
+	{
+		if (checkArray.length !== length)
+		{
+			throwIt(`${checkArray} has length ${checkArray.length} instead of desired length ${length}`);
 		}
 	}
 }
@@ -61,21 +96,20 @@ const condition =
 
 // Exception handling for this page
 
-function throwIt(exceptionMsg)
+function throwIt(exceptionMsg : string)
 {
-	// TODO: check if notices region on page
-	// if so, put the message there
-	// if not, add it and put the message there
+	console.log(exceptionMsg);
+
 	let errorDisplayElement = document.getElementById(names.errorDisplay);
 
 	// If an element for displaying errors is not yet on the page, create it
-	if (errorDisplayElement === null)
+	if (errorDisplayElement === null || errorDisplayElement === undefined)
 	{
 		errorDisplayElement = document.createElement("div");
 		errorDisplayElement.id = names.errorDisplay;
-	}
 
-	// TODO: check that error display element defined and not null
+		document.body.appendChild(errorDisplayElement);
+	}
 
 	let newMessage = document.createElement("div");
 	newMessage.classList.add(names.errorMessage);
@@ -112,7 +146,7 @@ const names =
 const defaults =
 {
 	cellColour: "white",
-	patternHeight: "3",
+	patternHeight: "3x",
 	patternWidth: "3",
 	cellId: (row : number, column : number) => `row${row}-col${column}`
 }
@@ -131,6 +165,11 @@ class Pattern
 
 	constructor(height : number, width : number)
 	{
+		// Check that inputs are valid numbers, not NaN
+		condition.isNum(height);
+		condition.isNum(width);
+		// TODO: check that both nonnegative?
+
 		// grid is column of rows, so
 		//   outer loop goes along/down the column
 		//   the inner loop goes across each row
@@ -195,6 +234,7 @@ function applyBrush(cell : HTMLElement)
 	// assert that matches got an array of three elements
 	// the first is the full string match, second and third are coordinates
 	// TODO: array assertions
+	condition.hasLength(matches, 3);
 
 	// extract the grid coordinates from the match above
 	let rowIndex = Number(matches[1]);
@@ -204,21 +244,22 @@ function applyBrush(cell : HTMLElement)
 	condition.isNum(rowIndex);
 	condition.isNum(columnIndex);
 
-	// Check that row and column indices are numbers and something hasn't gone wrong with the match
-	if (isNaN(rowIndex) || isNaN(columnIndex))
-	{
-		console.log("Bad news! One of the indices to update is not a number!");
-	}
-
 	// set the brush of the corresponding cell in the model to current brush
 	currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
 }
 
 function setBrush(brush : string)
 {
+	// TODO: checks on brush? is a valid background colour? this will change as the meaning of brush changes
+
 	currentState.brush = brush;
-	const currentBox = document.getElementById(names.currentBrush);
-	currentBox.style.background = brush;
+
+	let currentBrush = document.getElementById(names.currentBrush);
+
+	condition.isNotNull(currentBrush);
+	condition.isNotUndefined(currentBrush);
+
+	currentBrush.style.background = brush;
 }
 
 
@@ -232,30 +273,20 @@ function initializePattern()
 	let patternHeightInput : string = patternHeightInputElement.value;
 	let patternWidthInput : string = patternWidthInputElement.value;
 
-	// Check pattern dimension values are numbers
-	if (isNaN(Number(patternHeightInput)))
-	{
-		// TODO: update error once handled another way
-		console.log("Pattern height input is not a number.")
-	}
-	else if (isNaN(Number(patternWidthInput)))
-	{
-		// TODO: update error once handled another way
-		console.log("Pattern width input is not a number.")
-	}
-	else
-	{
-		let patternHeight : number = Number(patternHeightInput);
-		let patternWidth : number = Number(patternWidthInput);
+	// Check that pattern dimension values are numbers
+	condition.isNum(patternHeightInput);
+	condition.isNum(patternWidthInput);
 
-		currentState.displayPattern = new Pattern(patternHeight, patternWidth)
+	let patternHeight : number = Number(patternHeightInput);
+	let patternWidth : number = Number(patternWidthInput);
 
-		// write pattern HTML
-		let patternContainer = document.getElementById(names.region_pattern)
-		patternContainer.innerHTML = getPatternHTML(patternHeight, patternWidth);
+	currentState.displayPattern = new Pattern(patternHeight, patternWidth)
 
-		handleCellClick();
-	}
+	// write pattern HTML
+	let patternContainer = document.getElementById(names.region_pattern)
+	patternContainer.innerHTML = getPatternHTML(patternHeight, patternWidth);
+
+	handleCellClick();
 }
 
 function handleCellClick()
