@@ -12,6 +12,7 @@ TODO:
   * save the file as another file type?
   * way to make different file type openable, or will use app?
 - redo at some point (after pushing this as far as possible?)
+- move apply and set brush functions to the program state?
 
 Questions:
 
@@ -63,16 +64,34 @@ var defaults =
 // Model
 // -*-*-*-*-*-*-*-*-*-
 
-// TODO: group state in an object
+// -------
+// Program state
+// -------
 
-let displayPattern : Pattern;
+class ProgramState
+{
+	displayPattern : Pattern;
+	isMatchSelection : Boolean;
+	brush : string;
 
-// match brush mode
-let isMatchSelection : boolean = false;
+	constructor()
+	{
+		let gridHeight = Number(defaults.patternHeight);
+		let gridWidth = Number(defaults.patternWidth);
 
-// build brush
-var currentBrush = defaults.cellColour;
+		// TODO: assert that defaults for height and width are numbers
 
+		this.displayPattern = new Pattern(gridHeight, gridWidth);
+		this.isMatchSelection = false;
+		this.brush = defaults.cellColour;
+	}
+}
+
+var currentState : ProgramState = new ProgramState();
+
+// -------
+// Pattern data
+// -------
 
 class Pattern
 {
@@ -128,7 +147,7 @@ function initializePattern()
 		let patternHeight : number = Number(patternHeightInput);
 		let patternWidth : number = Number(patternWidthInput);
 
-		displayPattern = new Pattern(patternHeight, patternWidth)
+		currentState.displayPattern = new Pattern(patternHeight, patternWidth)
 
 		// TODO: make sure when a new pattern is generated, the old styles don't persist
 		// use regex to search for and delete all cell styles?
@@ -197,7 +216,7 @@ function onKeyDown_doc(e : KeyboardEvent)
 
 	// see keycode.info for more
 	// if correct key pressed and match selection is off, turn on
-	if (e.keyCode === 83 && !isMatchSelection)
+	if (e.keyCode === 83 && !currentState.isMatchSelection)
 	{
 		swapMatchMode();
 	}
@@ -214,7 +233,7 @@ function onKeyUp_doc(e : KeyboardEvent)
 
 	// see keycode.info for more
 	// if correct key released and match selection is on, turn off
-	if (e.keyCode === 83 && isMatchSelection)
+	if (e.keyCode === 83 && currentState.isMatchSelection)
 	{
 		swapMatchMode();
 	}
@@ -224,17 +243,17 @@ function swapMatchMode()
 {
 	let brushControl = document.getElementById(names.isMatchBrush);
 
-	if (isMatchSelection)
+	if (currentState.isMatchSelection)
 	{
 		// turn it off and change UI as necessary
-		isMatchSelection = false;
+		currentState.isMatchSelection = false;
 
 		brushControl.style.background = defaults.cellColour;
 	}
 	else
 	{
 		// turn it on and change UI as necessary
-		isMatchSelection = true;
+		currentState.isMatchSelection = true;
 
 		brushControl.style.background = "yellow";
 	}
@@ -246,7 +265,7 @@ function onCellClick(e : Event)
 {
 	var targetElement = <HTMLElement>e.target;
 
-	if (isMatchSelection)
+	if (currentState.isMatchSelection)
 	{
 		setBrush(targetElement.style.background);
 	}
@@ -258,7 +277,7 @@ function onCellClick(e : Event)
 
 function applyBrush(cell : HTMLElement)
 {
-	cell.style.background = currentBrush;
+	cell.style.background = currentState.brush;
 
 	// Q: since I can set the background of the cell, do I need to make styles for each cell?
 	// TODO: update model
@@ -285,12 +304,12 @@ function applyBrush(cell : HTMLElement)
 
 	// Update the model
 	// TODO: once the brush represents more than just a string of the colour, below will need to be updated
-	displayPattern.cells[rowIndex][colIndex] = currentBrush;
+	currentState.displayPattern.cells[rowIndex][colIndex] = currentState.brush;
 }
 
 function setBrush(brush : string)
 {
-	currentBrush = brush;
+	currentState.brush = brush;
 	const currentBox = document.getElementById(names.currentBrush);
 	currentBox.style.background = brush;
 }
