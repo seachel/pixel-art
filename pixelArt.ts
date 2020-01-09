@@ -13,6 +13,7 @@ TODO:
   * way to make different file type openable, or will use app?
 - redo at some point (after pushing this as far as possible?)
 - move apply and set brush functions to the program state?
+- build assertions library
 
 Questions:
 
@@ -38,6 +39,7 @@ Notes:
 // #region Assertions
 
 // Use the assertions below to create pre-conditions, post-conditions, or any other assertions where breaking execution is the preferred behaviour when not true
+// How to know when to use: consider it whenever creating a new variable
 const condition =
 {
 	isEqual: (checkVal1, checkVal2) =>
@@ -47,7 +49,7 @@ const condition =
 			throwIt(`${checkVal1} != ${checkVal2}`);
 		}
 	},
-	isNum: (checkVal : string) =>
+	isNum: (checkVal : any) =>
 	{
 		if (isNaN(Number(checkVal)))
 		{
@@ -89,7 +91,7 @@ function throwIt(exceptionMsg)
 // Below is an interface for id and class names shared between HTML, TS/JS, and CSS
 // Only use the fields in name in this file for easier referencing and renaming later
 // If changing any of the strings, be sure they are also updated in the TS and CSS files
-var names =
+const names =
 {
 	currentBrush: "current-brush",
 	isMatchBrush: "is-match-brush",
@@ -107,7 +109,7 @@ var names =
 }
 
 // Wrapped defaults
-var defaults =
+const defaults =
 {
 	cellColour: "white",
 	patternHeight: "3",
@@ -118,31 +120,6 @@ var defaults =
 // -*-*-*-*-*-*-*-*-*-
 // Model
 // -*-*-*-*-*-*-*-*-*-
-
-// -------
-// Program state
-// -------
-
-class ProgramState
-{
-	displayPattern : Pattern;
-	isMatchSelection : Boolean;
-	brush : string;
-
-	constructor()
-	{
-		let gridHeight = Number(defaults.patternHeight);
-		let gridWidth = Number(defaults.patternWidth);
-
-		// TODO: assert that defaults for height and width are numbers
-
-		this.displayPattern = new Pattern(gridHeight, gridWidth);
-		this.isMatchSelection = false;
-		this.brush = defaults.cellColour;
-	}
-}
-
-var currentState : ProgramState = new ProgramState();
 
 // -------
 // Pattern data
@@ -176,6 +153,37 @@ class Pattern
 	}
 }
 
+
+
+// -------
+// Program state
+// -------
+
+class ProgramState
+{
+	displayPattern : Pattern;
+	isMatchSelection : Boolean;
+	brush : string;
+
+	constructor()
+	{
+		let gridHeight = Number(defaults.patternHeight);
+		let gridWidth = Number(defaults.patternWidth);
+
+		// assert that height and width are numbers
+		condition.isNum(gridHeight);
+		condition.isNum(gridWidth);
+
+		this.displayPattern = new Pattern(gridHeight, gridWidth);
+		this.isMatchSelection = false;
+		this.brush = defaults.cellColour;
+	}
+}
+
+var currentState : ProgramState = new ProgramState();
+
+
+
 function applyBrush(cell : HTMLElement)
 {
 	cell.style.background = currentState.brush;
@@ -184,18 +192,26 @@ function applyBrush(cell : HTMLElement)
 	let matchExpression = /row(\d+)-col(\d+)/g;
 	let matches = matchExpression.exec(cell.id);
 
+	// assert that matches got an array of three elements
+	// the first is the full string match, second and third are coordinates
+	// TODO: array assertions
+
 	// extract the grid coordinates from the match above
 	let rowIndex = Number(matches[1]);
-	let colIndex = Number(matches[2]);
+	let columnIndex = Number(matches[2]);
+
+	// assert that the second and third matches are numbers
+	condition.isNum(rowIndex);
+	condition.isNum(columnIndex);
 
 	// Check that row and column indices are numbers and something hasn't gone wrong with the match
-	if (isNaN(rowIndex) || isNaN(colIndex))
+	if (isNaN(rowIndex) || isNaN(columnIndex))
 	{
 		console.log("Bad news! One of the indices to update is not a number!");
 	}
 
 	// set the brush of the corresponding cell in the model to current brush
-	currentState.displayPattern.cells[rowIndex][colIndex] = currentState.brush;
+	currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
 }
 
 function setBrush(brush : string)
