@@ -34,6 +34,58 @@ Notes:
 
 */
 
+
+// #region Assertions
+
+// Use the assertions below to create pre-conditions, post-conditions, or any other assertions where breaking execution is the preferred behaviour when not true
+const condition =
+{
+	isEqual: (checkVal1, checkVal2) =>
+	{
+		if (checkVal1 !== checkVal2)
+		{
+			throwIt(`${checkVal1} != ${checkVal2}`);
+		}
+	},
+	isNum: (checkVal : string) =>
+	{
+		if (isNaN(Number(checkVal)))
+		{
+			throwIt(`${checkVal} is not a number`);
+		}
+	}
+}
+
+
+// Exception handling for this page
+
+function throwIt(exceptionMsg)
+{
+	// TODO: check if notices region on page
+	// if so, put the message there
+	// if not, add it and put the message there
+	let errorDisplayElement = document.getElementById(names.errorDisplay);
+
+	// If an element for displaying errors is not yet on the page, create it
+	if (errorDisplayElement === null)
+	{
+		errorDisplayElement = document.createElement("div");
+		errorDisplayElement.id = names.errorDisplay;
+	}
+
+	// TODO: check that error display element defined and not null
+
+	let newMessage = document.createElement("div");
+	newMessage.classList.add(names.errorMessage);
+	newMessage.textContent = exceptionMsg;
+
+	errorDisplayElement.appendChild(newMessage);
+}
+
+
+// #endregion
+
+
 // Below is an interface for id and class names shared between HTML, TS/JS, and CSS
 // Only use the fields in name in this file for easier referencing and renaming later
 // If changing any of the strings, be sure they are also updated in the TS and CSS files
@@ -49,7 +101,9 @@ var names =
 	appContainer: "app-content",
 	region_settings: "region-settings",
 	region_pattern: "region-pattern",
-	region_brush: "region-brush"
+	region_brush: "region-brush",
+	errorDisplay: "error-display",
+	errorMessage: "error-message"
 }
 
 // Wrapped defaults

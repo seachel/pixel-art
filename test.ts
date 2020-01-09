@@ -37,7 +37,7 @@ someThingTest();
 
 // assert();
 
-function throwIt(errorMessage : string)
+function customThrow(errorMessage : string)
 {
 	throw errorMessage;
 	// TODO: log it on the page
