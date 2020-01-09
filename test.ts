@@ -1,3 +1,7 @@
+/* Notes:
+- if used for assertions in code, when a thing is thrown, either use or create an error region on the page
+*/
+
 function assert(value, message : string = "NO WORK.") : boolean
 {
 	if (value)
