@@ -5,6 +5,9 @@
 		<link rel="stylesheet" href="resources/styles.css">
 	</head>
 	<body id="project-body">
+		<div id="header">
+			Pixel Art and Cross-Stitch Pattern Designer
+		</div>
 		<div id="app-content">
 			<div id="region-settings">
 				<div>
@@ -53,5 +56,33 @@
 
 		</div>
 		<script src="pixelArt.js"></script>
+		<script>
+			(function initPage()
+			{
+				// temp content for initial brush construction
+				const element_blue = document.getElementById("blue");
+				const elementGreen = document.getElementById("green");
+				const elementPurple = document.getElementById("purple");
+
+				element_blue.addEventListener("click", makeCurrentBlue);
+				elementGreen.addEventListener("click", makeCurrentGreen);
+				elementPurple.addEventListener("click", makeCurrentPurple);
+				// end of temp content
+
+				window.addEventListener("keydown", onKeyDown_doc, false);
+				window.addEventListener("keyup", onKeyUp_doc, false);
+
+				document.getElementById(names.isMatchBrush).addEventListener("click", swapMatchMode, false);
+
+				let button_makePattern = document.getElementById(names.button_createPattern);
+
+				button_makePattern.addEventListener("click", initializePattern);
+				(document.getElementById(names.patternHeight)).value = defaults.patternHeight;
+				(document.getElementById(names.patternWidth)).value = defaults.patternWidth;
+
+				initializePattern();
+			})();
+		</script>
+
     </body>
 </html>

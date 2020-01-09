@@ -1,13 +1,10 @@
+/* Top-level layout styles */
+
 HTML, body
 {
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
-}
-
-#palette
-{
-	margin: 100px 10px;
 }
 
 #app-content
@@ -19,6 +16,7 @@ HTML, body
 #region-settings
 {
 	background: rgb(245, 151, 151);
+	flex-basis: 20%;
 }
 
 #region-pattern
@@ -33,11 +31,11 @@ HTML, body
 #region-brush
 {
 	background: rgb(215, 171, 242);
+	flex-basis: 20%;
 }
 
-#blue { background: rgb(68, 68, 211); }
-#green { background: forestgreen; }
-#purple { background: rgb(169, 84, 255); }
+
+/* Pattern styles */
 
 .pattern-cell
 {
@@ -52,3 +50,15 @@ HTML, body
 {
 	border-collapse: collapse;
 }
+
+
+/* Brush region styles */
+
+#palette
+{
+	margin: 100px 10px;
+}
+
+#blue { background: rgb(68, 68, 211); }
+#green { background: forestgreen; }
+#purple { background: rgb(169, 84, 255); }

@@ -50,7 +50,7 @@ var names =
 	region_brush: "region-brush"
 }
 
-// TODO: wrap defaults
+// Wrapped defaults
 var defaults =
 {
 	cellColour: "white",
@@ -63,7 +63,16 @@ var defaults =
 // Model
 // -*-*-*-*-*-*-*-*-*-
 
+// TODO: group state in an object
+
 let displayPattern : Pattern;
+
+// match brush mode
+let isMatchSelection : boolean = false;
+
+// build brush
+var currentBrush = defaults.cellColour;
+
 
 class Pattern
 {
@@ -97,7 +106,7 @@ function initializePattern()
 {
 	// Get elements containing dimension inputs and assign to input element type
 	let patternHeightInputElement = <HTMLInputElement> document.getElementById(names.patternHeight);
-	let patternWidthInputElement = (<HTMLInputElement>document.getElementById(names.patternWidth));
+	let patternWidthInputElement = <HTMLInputElement> document.getElementById(names.patternWidth);
 
 	// Get input values as strings
 	let patternHeightInput : string = patternHeightInputElement.value;
@@ -175,9 +184,6 @@ function getPatternHTML(height : number, width : number) : string
 }
 
 
-// match brush mode
-let isMatchSelection : boolean = false;
-
 // if match selection mode is on, then don't colour selected square but instead set the brush to its colour
 
 function onKeyDown_doc(e : KeyboardEvent)
@@ -214,11 +220,6 @@ function onKeyUp_doc(e : KeyboardEvent)
 	}
 }
 
-
-window.addEventListener("keydown", onKeyDown_doc, false);
-window.addEventListener("keyup", onKeyUp_doc, false);
-
-
 function swapMatchMode()
 {
 	let brushControl = document.getElementById(names.isMatchBrush);
@@ -238,8 +239,6 @@ function swapMatchMode()
 		brushControl.style.background = "yellow";
 	}
 }
-
-document.getElementById(names.isMatchBrush).addEventListener("click", swapMatchMode, false);
 
 
 // Function to apply the brush to the passed event's target
@@ -296,9 +295,6 @@ function setBrush(brush : string)
 	currentBox.style.background = brush;
 }
 
-// build brush
-var currentBrush = defaults.cellColour;
-
 // hook handlers to pallet items
 function makeCurrentBlue() {
 	setBrush("blue");
@@ -312,28 +308,9 @@ function makeCurrentPurple() {
 	setBrush("rgb(169, 84, 255)");
 }
 
-const element_blue = document.getElementById("blue");
-const elementGreen = document.getElementById("green");
-const elementPurple = document.getElementById("purple");
-
-element_blue.addEventListener("click", makeCurrentBlue);
-elementGreen.addEventListener("click", makeCurrentGreen);
-elementPurple.addEventListener("click", makeCurrentPurple);
-
 // Note: used for testing
 function write(thingToWrite : string)
 {
 	let dumpElement = document.getElementById("dump");
 	dumpElement.textContent += "\n" + thingToWrite;
 }
-
-const button_makePattern = document.getElementById(names.button_createPattern);
-button_makePattern.addEventListener("click", initializePattern);
-
-(function initPage()
-{
-	(<HTMLInputElement> document.getElementById(names.patternHeight)).value = defaults.patternHeight;
-	(<HTMLInputElement> document.getElementById(names.patternWidth)).value = defaults.patternWidth;
-
-	initializePattern();
-})();
