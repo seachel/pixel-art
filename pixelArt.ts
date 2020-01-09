@@ -206,12 +206,12 @@ class ProgramState
 
 	constructor()
 	{
+		// assert that default height and width are numbers
+		condition.isNum(defaults.patternHeight);
+		condition.isNum(defaults.patternWidth);
+
 		let gridHeight = Number(defaults.patternHeight);
 		let gridWidth = Number(defaults.patternWidth);
-
-		// assert that height and width are numbers
-		condition.isNum(gridHeight);
-		condition.isNum(gridWidth);
 
 		this.displayPattern = new Pattern(gridHeight, gridWidth);
 		this.isMatchSelection = false;
@@ -233,16 +233,15 @@ function applyBrush(cell : HTMLElement)
 
 	// assert that matches got an array of three elements
 	// the first is the full string match, second and third are coordinates
-	// TODO: array assertions
 	condition.hasLength(matches, 3);
+
+	// assert that the second and third matches are numbers
+	condition.isNum(matches[1]);
+	condition.isNum(matches[2]);
 
 	// extract the grid coordinates from the match above
 	let rowIndex = Number(matches[1]);
 	let columnIndex = Number(matches[2]);
-
-	// assert that the second and third matches are numbers
-	condition.isNum(rowIndex);
-	condition.isNum(columnIndex);
 
 	// set the brush of the corresponding cell in the model to current brush
 	currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
