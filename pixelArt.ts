@@ -254,6 +254,23 @@ class ProgramState
 
 		currentBrush.style.background = brush;
 	}
+
+	writePattern()
+	{
+		let fileString = JSON.stringify(this.displayPattern);
+
+		window.localStorage.setItem("saved pattern", fileString);
+	}
+
+	readPattern()
+	{
+		let fileString = window.localStorage.getItem("saved pattern");
+
+		// TODO: check that valid JSON?
+		// TODO: check that parsed JSON has the desired fields?
+
+		this.displayPattern = JSON.parse(fileString);
+	}
 }
 
 var currentState : ProgramState = new ProgramState();
@@ -282,13 +299,14 @@ function initializePattern()
 	let patternContainer = document.getElementById(names.region_pattern)
 	patternContainer.innerHTML = getPatternHTML(patternHeight, patternWidth);
 
-	handleCellClick();
+	hookUpCellClickEvents();
 }
 
-function handleCellClick()
+function hookUpCellClickEvents()
 {
 	// Add event listener to cells
 	const cells = document.getElementsByClassName(names.patternCellName);
+
 	for (var i = 0; i < cells.length; i++)
 	{
 		cells[i].addEventListener("click", onCellClick, false);
