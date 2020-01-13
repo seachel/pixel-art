@@ -1,20 +1,19 @@
 /*
 TODO:
-- set brush to selection
-  * hold another button as part of the event? (done)
-  * keydown changes state for certain keys? (done)
-  * state change using button (done)
-- apply selection elsewhere in pattern while mouse down?
-- select and drag to move? or copy? (later)
+- Organize!
+  * pull out initialization code?
+  * pull out code referencing the page?
+  * read about JS/TS file organization?
+  * MVC? By region?
 - export to PDF
   * need to have representation of pattern; do this after refactor?
   * write the table to pdf
   * save the file as another file type?
   * way to make different file type openable, or will use app?
-- redo at some point (after pushing this as far as possible?)
 - move apply and set brush functions to the program state?
-- build assertions library
 - check defaults in initialization?
+- write pattern to and read from web storage
+
 
 Questions:
 
@@ -146,7 +145,7 @@ const names =
 const defaults =
 {
 	cellColour: "white",
-	patternHeight: "3x",
+	patternHeight: "3",
 	patternWidth: "3",
 	cellId: (row : number, column : number) => `row${row}-col${column}`
 }
@@ -217,49 +216,47 @@ class ProgramState
 		this.isMatchSelection = false;
 		this.brush = defaults.cellColour;
 	}
+
+	applyBrush(cell : HTMLElement)
+	{
+		cell.style.background = currentState.brush;
+
+		// regular expression to match the coordinates from a cell id
+		let matchExpression = /row(\d+)-col(\d+)/g;
+		let matches = matchExpression.exec(cell.id);
+
+		// assert that matches got an array of three elements
+		// the first is the full string match, second and third are coordinates
+		condition.hasLength(matches, 3);
+
+		// assert that the second and third matches are numbers
+		condition.isNum(matches[1]);
+		condition.isNum(matches[2]);
+
+		// extract the grid coordinates from the match above
+		let rowIndex = Number(matches[1]);
+		let columnIndex = Number(matches[2]);
+
+		// set the brush of the corresponding cell in the model to current brush
+		currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
+	}
+
+	setBrush(brush : string)
+	{
+		// TODO: checks on brush? is a valid background colour? this will change as the meaning of brush changes
+
+		currentState.brush = brush;
+
+		let currentBrush = document.getElementById(names.currentBrush);
+
+		condition.isNotNull(currentBrush);
+		condition.isNotUndefined(currentBrush);
+
+		currentBrush.style.background = brush;
+	}
 }
 
 var currentState : ProgramState = new ProgramState();
-
-
-
-function applyBrush(cell : HTMLElement)
-{
-	cell.style.background = currentState.brush;
-
-	// regular expression to match the coordinates from a cell id
-	let matchExpression = /row(\d+)-col(\d+)/g;
-	let matches = matchExpression.exec(cell.id);
-
-	// assert that matches got an array of three elements
-	// the first is the full string match, second and third are coordinates
-	condition.hasLength(matches, 3);
-
-	// assert that the second and third matches are numbers
-	condition.isNum(matches[1]);
-	condition.isNum(matches[2]);
-
-	// extract the grid coordinates from the match above
-	let rowIndex = Number(matches[1]);
-	let columnIndex = Number(matches[2]);
-
-	// set the brush of the corresponding cell in the model to current brush
-	currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
-}
-
-function setBrush(brush : string)
-{
-	// TODO: checks on brush? is a valid background colour? this will change as the meaning of brush changes
-
-	currentState.brush = brush;
-
-	let currentBrush = document.getElementById(names.currentBrush);
-
-	condition.isNotNull(currentBrush);
-	condition.isNotUndefined(currentBrush);
-
-	currentBrush.style.background = brush;
-}
 
 
 function initializePattern()
@@ -393,26 +390,26 @@ function onCellClick(e : Event)
 
 	if (currentState.isMatchSelection)
 	{
-		setBrush(targetElement.style.background);
+		currentState.setBrush(targetElement.style.background);
 	}
 	else
 	{
-		applyBrush(targetElement);
+		currentState.applyBrush(targetElement);
 	}
 }
 
 
 // Temp: hook handlers to pallet items
 function makeCurrentBlue() {
-	setBrush("blue");
+	currentState.setBrush("blue");
 }
 
 function makeCurrentGreen() {
-	setBrush("green");
+	currentState.setBrush("green");
 }
 
 function makeCurrentPurple() {
-	setBrush("rgb(169, 84, 255)");
+	currentState.setBrush("rgb(169, 84, 255)");
 }
 
 // Note: used for testing

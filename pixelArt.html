@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>TypeScript Pixel Art</title>
+		<title>Pixel Art</title>
 		<link rel="stylesheet" href="resources/styles.css">
 	</head>
 	<body id="project-body">
@@ -59,6 +59,9 @@
 		<script>
 			(function initPage()
 			{
+				const currentBrush = document.getElementById("current-brush");
+				currentBrush.style.background = "white";
+
 				// temp content for initial brush construction
 				const element_blue = document.getElementById("blue");
 				const elementGreen = document.getElementById("green");
