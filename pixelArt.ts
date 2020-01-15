@@ -133,6 +133,8 @@ const names =
 	patternGrid: "table_pattern",
 	patternCellName: "pattern-cell",
 	button_createPattern: "btn_make-grid",
+	button_savePattern: "btn_save-pattern",
+	button_loadPattern: "btn_load-pattern",
 	appContainer: "app-content",
 	region_settings: "region-settings",
 	region_pattern: "region-pattern",
@@ -168,12 +170,18 @@ class Pattern
 		condition.isNum(height);
 		condition.isNum(width);
 		// TODO: check that both nonnegative?
-		// * this should be front-end validation rather than breaking
+		// * this should be front-end validation rather than breaking?
+
+		// write pattern HTML
+		let patternContainer = document.getElementById(names.region_pattern)
+		patternContainer.innerHTML = getPatternHTML(height, width);
+
+		// TODO: where should this live?
+		this.initializeCellViews();
 
 		// cells is column of rows, so
 		//   outer loop goes along/down the column
 		//   the inner loop goes across each row
-
 		let cells : string[][] = [];
 
 		for (let i = 0; i < height; i++)
@@ -190,8 +198,24 @@ class Pattern
 
 		this.cells = cells;
 	}
-}
 
+	initializeCellViews()
+	{
+		// Add event listener to cells
+		const viewCells = document.getElementsByClassName(names.patternCellName);
+
+		for (var i = 0; i < viewCells.length; i++)
+		{
+			let currentCell : HTMLElement = <HTMLElement> viewCells[i];
+
+			// hook up click event
+			currentCell.addEventListener("click", onCellClick, false);
+
+			// style background with default
+			currentCell.style.background = defaults.cellColour;
+		}
+	}
+}
 
 
 // -------
@@ -206,18 +230,31 @@ class ProgramState
 
 	constructor()
 	{
-		// assert that default height and width are numbers
-		// TODO: move to page init
-		// TODO: constructor take arguments instead of using defaults
-		condition.isNum(defaults.patternHeight);
-		condition.isNum(defaults.patternWidth);
-
-		let gridHeight = Number(defaults.patternHeight);
-		let gridWidth = Number(defaults.patternWidth);
-
-		this.displayPattern = new Pattern(gridHeight, gridWidth);
+		// TODO: should initializePattern content be in Pattern constructor?
+		this.createNewPattern();
 		this.isMatchSelection = false;
 		this.brush = defaults.cellColour; // TODO: make arg
+	}
+
+	createNewPattern()
+	{
+		// Get elements containing dimension inputs and assign to input element type
+		let patternHeightInputElement = <HTMLInputElement> document.getElementById(names.patternHeight);
+		let patternWidthInputElement = <HTMLInputElement> document.getElementById(names.patternWidth);
+
+		// Get input values as strings
+		let patternHeightInput : string = patternHeightInputElement.value;
+		let patternWidthInput : string = patternWidthInputElement.value;
+
+		// Check that pattern dimension values are numbers
+		condition.isNum(patternHeightInput);
+		condition.isNum(patternWidthInput);
+
+		let patternHeight : number = Number(patternHeightInput);
+		let patternWidth : number = Number(patternWidthInput);
+
+		// TODO: should initializePattern content be in Pattern constructor?
+		this.displayPattern = new Pattern(patternHeight, patternWidth);
 	}
 
 	applyBrush(cell : HTMLElement)
@@ -257,64 +294,27 @@ class ProgramState
 
 		currentBrush.style.background = brush;
 	}
-
-	writePattern()
-	{
-		let fileString = JSON.stringify(this.displayPattern);
-
-		window.localStorage.setItem("saved pattern", fileString);
-	}
-
-	readPattern()
-	{
-		let fileString = window.localStorage.getItem("saved pattern");
-
-		// TODO: check that valid JSON?
-		// TODO: check that parsed JSON has the desired fields?
-
-		this.displayPattern = JSON.parse(fileString);
-	}
 }
 
-var currentState : ProgramState = new ProgramState();
+var currentState : ProgramState;
 
-
-function initializePattern()
+function writePattern()
 {
-	// Get elements containing dimension inputs and assign to input element type
-	let patternHeightInputElement = <HTMLInputElement> document.getElementById(names.patternHeight);
-	let patternWidthInputElement = <HTMLInputElement> document.getElementById(names.patternWidth);
+	let fileString = JSON.stringify(currentState.displayPattern);
 
-	// Get input values as strings
-	let patternHeightInput : string = patternHeightInputElement.value;
-	let patternWidthInput : string = patternWidthInputElement.value;
-
-	// Check that pattern dimension values are numbers
-	condition.isNum(patternHeightInput);
-	condition.isNum(patternWidthInput);
-
-	let patternHeight : number = Number(patternHeightInput);
-	let patternWidth : number = Number(patternWidthInput);
-
-	currentState.displayPattern = new Pattern(patternHeight, patternWidth)
-
-	// write pattern HTML
-	let patternContainer = document.getElementById(names.region_pattern)
-	patternContainer.innerHTML = getPatternHTML(patternHeight, patternWidth);
-
-	hookUpCellClickEvents();
+	window.localStorage.setItem("saved pattern", fileString);
 }
 
-function hookUpCellClickEvents()
+function readPattern()
 {
-	// Add event listener to cells
-	const cells = document.getElementsByClassName(names.patternCellName);
+	let fileString = window.localStorage.getItem("saved pattern");
 
-	for (var i = 0; i < cells.length; i++)
-	{
-		cells[i].addEventListener("click", onCellClick, false);
-	}
+	// TODO: check that valid JSON?
+	// TODO: check that parsed JSON has the desired fields?
+
+	currentState.displayPattern = JSON.parse(fileString);
 }
+
 
 function getPatternHTML(height : number, width : number) : string
 {
