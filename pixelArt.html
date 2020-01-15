@@ -21,6 +21,12 @@
 				<button id="btn_make-grid" type="button">
 					Make grid
 				</button>
+				<button id="save-pattern">
+					Save pattern
+				</button>
+				<button id="load-pattern">
+					Load pattern
+				</button>
 			</div>
 			<div id="region-pattern">
 			</div>
@@ -82,6 +88,8 @@
 				button_makePattern.addEventListener("click", initializePattern);
 				(document.getElementById(names.patternHeight)).value = defaults.patternHeight;
 				(document.getElementById(names.patternWidth)).value = defaults.patternWidth;
+
+				//let button_savePattern = document.getElementById(names.)
 
 				initializePattern();
 			})();

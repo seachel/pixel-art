@@ -168,8 +168,9 @@ class Pattern
 		condition.isNum(height);
 		condition.isNum(width);
 		// TODO: check that both nonnegative?
+		// * this should be front-end validation rather than breaking
 
-		// grid is column of rows, so
+		// cells is column of rows, so
 		//   outer loop goes along/down the column
 		//   the inner loop goes across each row
 
@@ -206,6 +207,8 @@ class ProgramState
 	constructor()
 	{
 		// assert that default height and width are numbers
+		// TODO: move to page init
+		// TODO: constructor take arguments instead of using defaults
 		condition.isNum(defaults.patternHeight);
 		condition.isNum(defaults.patternWidth);
 
@@ -214,7 +217,7 @@ class ProgramState
 
 		this.displayPattern = new Pattern(gridHeight, gridWidth);
 		this.isMatchSelection = false;
-		this.brush = defaults.cellColour;
+		this.brush = defaults.cellColour; // TODO: make arg
 	}
 
 	applyBrush(cell : HTMLElement)
