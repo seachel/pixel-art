@@ -1,7 +1,6 @@
 /*
 TODO:
 - Organize!
-  * pull out initialization code?
   * pull out code referencing the page?
   * read about JS/TS file organization?
   * MVC? By region?
@@ -12,8 +11,7 @@ TODO:
   * way to make different file type openable, or will use app?
 - move apply and set brush functions to the program state?
 - check defaults in initialization?
-- write pattern to and read from web storage
-
+- learn about modules
 
 Questions:
 
@@ -47,7 +45,7 @@ Notes:
 // Use the assertions below to create pre-conditions, post-conditions, or any other assertions where breaking execution is the preferred behaviour when not true
 // How to know when to use: consider it whenever creating a new variable
 // use isNum check on string before using `Number` function to get more information
-const condition =
+const assertion =
 {
 	isEqual: (checkVal1, checkVal2) =>
 	{
@@ -168,8 +166,8 @@ class Pattern
 	constructor(height : number, width : number)
 	{
 		// Check that inputs are valid numbers, not NaN
-		condition.isNum(height);
-		condition.isNum(width);
+		assertion.isNum(height);
+		assertion.isNum(width);
 		// TODO: check that both nonnegative?
 		// * this should be front-end validation rather than breaking?
 
@@ -257,8 +255,8 @@ class ProgramState
 		let patternWidthInput : string = patternWidthInputElement.value;
 
 		// Check that pattern dimension values are numbers
-		condition.isNum(patternHeightInput);
-		condition.isNum(patternWidthInput);
+		assertion.isNum(patternHeightInput);
+		assertion.isNum(patternWidthInput);
 
 		let patternHeight : number = Number(patternHeightInput);
 		let patternWidth : number = Number(patternWidthInput);
@@ -276,11 +274,11 @@ class ProgramState
 
 		// assert that matches got an array of three elements
 		// the first is the full string match, second and third are coordinates
-		condition.hasLength(matches, 3);
+		assertion.hasLength(matches, 3);
 
 		// assert that the second and third matches are numbers
-		condition.isNum(matches[1]);
-		condition.isNum(matches[2]);
+		assertion.isNum(matches[1]);
+		assertion.isNum(matches[2]);
 
 		// extract the grid coordinates from the match above
 		let rowIndex = Number(matches[1]);
@@ -298,8 +296,8 @@ class ProgramState
 
 		let currentBrush = document.getElementById(names.currentBrush);
 
-		condition.isNotNull(currentBrush);
-		condition.isNotUndefined(currentBrush);
+		assertion.isNotNull(currentBrush);
+		assertion.isNotUndefined(currentBrush);
 
 		currentBrush.style.background = brush;
 	}
