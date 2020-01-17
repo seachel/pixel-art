@@ -30,6 +30,7 @@ Questions:
   * correction: silent failure without checks
 - what to do about redundant assertion checks?
   * restrict to pre- and post-conditions?
+- I don't want anything to be allowed to be undefined (e.g. if I try to set a style defaults.background, I want to be notified that this is undefined)
 
 
 Notes:
@@ -179,6 +180,11 @@ class Pattern
 		// TODO: where should this live?
 		this.initializeCellViews();
 
+		this.cells = this.initializeCells(height, width);
+	}
+
+	private initializeCells(height : number, width : number) : string[][]
+	{
 		// cells is column of rows, so
 		//   outer loop goes along/down the column
 		//   the inner loop goes across each row
@@ -196,10 +202,10 @@ class Pattern
 			cells.push(row);
 		}
 
-		this.cells = cells;
+		return cells;
 	}
 
-	initializeCellViews()
+	public initializeCellViews()
 	{
 		// Add event listener to cells
 		const viewCells = document.getElementsByClassName(names.patternCellName);
@@ -230,10 +236,14 @@ class ProgramState
 
 	constructor()
 	{
-		// TODO: should initializePattern content be in Pattern constructor?
+		// set the display pattern
 		this.createNewPattern();
+
+		// set the default value for whether or not we are in match mode for setting the brush
 		this.isMatchSelection = false;
-		this.brush = defaults.cellColour; // TODO: make arg
+
+		// set the current brush to the default cell colour
+		this.brush = defaults.cellColour;
 	}
 
 	createNewPattern()
@@ -253,7 +263,6 @@ class ProgramState
 		let patternHeight : number = Number(patternHeightInput);
 		let patternWidth : number = Number(patternWidthInput);
 
-		// TODO: should initializePattern content be in Pattern constructor?
 		this.displayPattern = new Pattern(patternHeight, patternWidth);
 	}
 

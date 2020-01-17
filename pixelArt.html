@@ -85,8 +85,8 @@
 				(document.getElementById(names.patternWidth)).value = defaults.patternWidth;
 
 				// set default brush styles
-				const currentBrush = document.getElementById("current-brush");
-				currentBrush.style.background = defaults.background;
+				const currentBrushElement = document.getElementById("current-brush");
+				currentBrushElement.style.background = defaults.cellColour;
 
 				// create state object
 				currentState = new ProgramState();
