@@ -105,10 +105,10 @@
 
 				// hook up handlers for buttons to write and read a pattern
 				let button_savePattern = document.getElementById(names.button_savePattern)
-				button_savePattern.addEventListener("click", writePattern);
+				button_savePattern.addEventListener("click", currentState.writePattern);
 
 				let button_loadPattern = document.getElementById(names.button_loadPattern)
-				button_loadPattern.addEventListener("click", readPattern);
+				button_loadPattern.addEventListener("click", currentState.readPattern);
 			})();
 		</script>
 

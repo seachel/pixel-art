@@ -12,6 +12,8 @@ TODO:
 - move apply and set brush functions to the program state?
 - check defaults in initialization?
 - learn about modules
+- in assertions, give warnings when called unnecessarily? (e.g. if the type of arg passed to isNum is already a number)
+- check defaults
 
 Questions:
 
@@ -61,6 +63,13 @@ const assertion =
 			throwIt(`${checkVal} is not a number.`);
 		}
 	},
+	isNonNegative: (checkVal : number) =>
+	{
+		if (checkVal < 0)
+		{
+			throwIt(`${checkVal} should be nonnegative`);
+		}
+	},
 	isNotNull: (checkVal : any) =>
 	{
 		if (checkVal === null)
@@ -93,7 +102,6 @@ const assertion =
 
 
 // Exception handling for this page
-
 function throwIt(exceptionMsg : string)
 {
 	console.log(exceptionMsg);
@@ -166,19 +174,52 @@ class Pattern
 	constructor(height : number, width : number)
 	{
 		// Check that inputs are valid numbers, not NaN
-		assertion.isNum(height);
-		assertion.isNum(width);
+		assertion.isNonNegative(height);
 		// TODO: check that both nonnegative?
 		// * this should be front-end validation rather than breaking?
 
 		// write pattern HTML
 		let patternContainer = document.getElementById(names.region_pattern)
-		patternContainer.innerHTML = getPatternHTML(height, width);
+		patternContainer.innerHTML = this.getPatternHTML(height, width);
 
-		// TODO: where should this live?
+		// initialize the HTML elements corresponding to cells in the grid representing the pattern
 		this.initializeCellViews();
 
+		// set the cells of the object to defaults
 		this.cells = this.initializeCells(height, width);
+	}
+
+
+	// TODO: update function with functions to write html elements
+	private getPatternHTML(height : number, width : number) : string
+	{
+		// get element where the pattern will be written
+		// build the text for that element
+		let patternHTML = `<table id="${names.patternGrid}">
+		`;
+
+		for (let i = 0; i < height; i++)
+		{
+			patternHTML += `<tr>
+			`;
+
+			for (let j = 0; j < width; j++)
+			{
+				patternHTML += `<td id="${defaults.cellId(i,j)}" class="${names.patternCellName}">
+				-
+				</td>
+				`;
+				// Note: "-" is temp content for cell
+			}
+
+			patternHTML += `</tr>
+			`;
+		}
+
+		patternHTML += `</table>
+		`;
+
+		return patternHTML;
 	}
 
 	private initializeCells(height : number, width : number) : string[][]
@@ -244,6 +285,7 @@ class ProgramState
 		this.brush = defaults.cellColour;
 	}
 
+	// Sets the displayed pattern field to a new pattern object according to the input dimensions on the page
 	createNewPattern()
 	{
 		// Get elements containing dimension inputs and assign to input element type
@@ -264,6 +306,7 @@ class ProgramState
 		this.displayPattern = new Pattern(patternHeight, patternWidth);
 	}
 
+	// applies the current brush to the passed cell element and its corresponding element in the data grid
 	applyBrush(cell : HTMLElement)
 	{
 		cell.style.background = currentState.brush;
@@ -301,58 +344,26 @@ class ProgramState
 
 		currentBrush.style.background = brush;
 	}
+
+	writePattern()
+	{
+		let fileString = JSON.stringify(this.displayPattern);
+
+		window.localStorage.setItem("saved pattern", fileString);
+	}
+
+	readPattern()
+	{
+		let fileString = window.localStorage.getItem("saved pattern");
+
+		// TODO: check that valid JSON?
+		// TODO: check that parsed JSON has the desired fields?
+
+		this.displayPattern = JSON.parse(fileString);
+	}
 }
 
 var currentState : ProgramState;
-
-function writePattern()
-{
-	let fileString = JSON.stringify(currentState.displayPattern);
-
-	window.localStorage.setItem("saved pattern", fileString);
-}
-
-function readPattern()
-{
-	let fileString = window.localStorage.getItem("saved pattern");
-
-	// TODO: check that valid JSON?
-	// TODO: check that parsed JSON has the desired fields?
-
-	currentState.displayPattern = JSON.parse(fileString);
-}
-
-
-function getPatternHTML(height : number, width : number) : string
-{
-	// get element where the pattern will be written
-	// build the text for that element
-	let patternHTML = `<table id="${names.patternGrid}">
-	`;
-
-	for (let i = 0; i < height; i++)
-	{
-		patternHTML += `<tr>
-		`;
-
-		for (let j = 0; j < width; j++)
-		{
-			patternHTML += `<td id="${defaults.cellId(i,j)}" class="${names.patternCellName}">
-			-
-			</td>
-			`;
-			// Note: "-" is temp content for cell
-		}
-
-		patternHTML += `</tr>
-		`;
-	}
-
-	patternHTML += `</table>
-	`;
-
-	return patternHTML;
-}
 
 
 // if match selection mode is on, then don't colour selected square but instead set the brush to its colour
