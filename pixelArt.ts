@@ -14,6 +14,8 @@ TODO:
 - learn about modules
 - in assertions, give warnings when called unnecessarily? (e.g. if the type of arg passed to isNum is already a number)
 - check defaults
+  * way to know if I've checked everything? make defaults enumerable? flag that verified?
+- documentation for NaN : number?
 
 Questions:
 
@@ -65,6 +67,10 @@ const assertion =
 	},
 	isNonNegative: (checkVal : number) =>
 	{
+		if (isNaN(checkVal))
+		{
+			throwIt(`${checkVal} passed to check non-negative :(`)
+		}
 		if (checkVal < 0)
 		{
 			throwIt(`${checkVal} should be nonnegative`);
@@ -173,10 +179,10 @@ class Pattern
 
 	constructor(height : number, width : number)
 	{
-		// Check that inputs are valid numbers, not NaN
+		// TODO: Check that inputs are valid numbers, not NaN
 		assertion.isNonNegative(height);
-		// TODO: check that both nonnegative?
-		// * this should be front-end validation rather than breaking?
+		assertion.isNonNegative(width);
+		// TODO: this should be front-end validation rather than breaking?
 
 		// write pattern HTML
 		let patternContainer = document.getElementById(names.region_pattern)
@@ -269,7 +275,17 @@ class Pattern
 
 class ProgramState
 {
-	displayPattern : Pattern;
+	private _displayPattern : Pattern;
+	get displayPattern() : Pattern
+	{
+		return this._displayPattern;
+	}
+	set displayPattern(value : Pattern)
+	{
+		// TODO: update view
+		this._displayPattern = value;
+	}
+
 	isMatchSelection : Boolean;
 	brush : string;
 
@@ -328,14 +344,14 @@ class ProgramState
 		let columnIndex = Number(matches[2]);
 
 		// set the brush of the corresponding cell in the model to current brush
-		currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
+		this.displayPattern.cells[rowIndex][columnIndex] = this.brush;
 	}
 
 	setBrush(brush : string)
 	{
 		// TODO: checks on brush? is a valid background colour? this will change as the meaning of brush changes
 
-		currentState.brush = brush;
+		this.brush = brush;
 
 		let currentBrush = document.getElementById(names.currentBrush);
 
@@ -344,26 +360,28 @@ class ProgramState
 
 		currentBrush.style.background = brush;
 	}
-
-	writePattern()
-	{
-		let fileString = JSON.stringify(this.displayPattern);
-
-		window.localStorage.setItem("saved pattern", fileString);
-	}
-
-	readPattern()
-	{
-		let fileString = window.localStorage.getItem("saved pattern");
-
-		// TODO: check that valid JSON?
-		// TODO: check that parsed JSON has the desired fields?
-
-		this.displayPattern = JSON.parse(fileString);
-	}
 }
 
 var currentState : ProgramState;
+
+
+function writePattern()
+{
+	let fileString = JSON.stringify(currentState.displayPattern);
+
+	window.localStorage.setItem("saved pattern", fileString);
+}
+
+function readPattern()
+{
+	let fileString = window.localStorage.getItem("saved pattern");
+
+	// TODO: check that valid JSON?
+	// TODO: check that parsed JSON has the desired fields?
+
+	// TODO: it's possible to update the display pattern here, but it doesn't update the field on currentState and doesn't cause any persistent update to the model; need function to update it, and make the field private? then this function should be outside?
+	currentState.displayPattern = JSON.parse(fileString);
+}
 
 
 // if match selection mode is on, then don't colour selected square but instead set the brush to its colour
