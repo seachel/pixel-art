@@ -2,29 +2,6 @@
 import assertion from './modules/assertion.js';
 
 
-// Exception handling for this page
-function throwIt(exceptionMsg : string)
-{
-	console.log(exceptionMsg);
-
-	let errorDisplayElement = document.getElementById(names.errorDisplay);
-
-	// If an element for displaying errors is not yet on the page, create it
-	if (errorDisplayElement === null || errorDisplayElement === undefined)
-	{
-		errorDisplayElement = document.createElement("div");
-		errorDisplayElement.id = names.errorDisplay;
-
-		document.body.appendChild(errorDisplayElement);
-	}
-
-	let newMessage = document.createElement("div");
-	newMessage.classList.add(names.errorMessage);
-	newMessage.textContent = exceptionMsg;
-
-	errorDisplayElement.appendChild(newMessage);
-}
-
 /*
 TODO:
 - Organize!
