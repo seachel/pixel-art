@@ -1,4 +1,4 @@
-export default assertion;
+export { assertion };
 
 // Use the assertions below to create pre-conditions, post-conditions, or any other assertions where breaking execution is the preferred behaviour when not true
 // How to know when to use: consider it whenever creating a new variable

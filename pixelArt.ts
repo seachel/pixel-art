@@ -1,5 +1,5 @@
 // Imports:
-import assertion from './modules/assertion.js';
+import { assertion } from './modules/assertion.js';
 
 
 /*
