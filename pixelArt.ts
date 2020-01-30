@@ -1,4 +1,5 @@
 // Imports:
+import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
 
 
@@ -49,36 +50,7 @@ Notes:
 
 
 
-// Below is an interface for id and class names shared between HTML, TS/JS, and CSS
-// Only use the fields in name in this file for easier referencing and renaming later
-// If changing any of the strings, be sure they are also updated in the TS and CSS files
-const names =
-{
-	currentBrush: "current-brush",
-	isMatchBrush: "is-match-brush",
-	patternHeight: "pattern-height",
-	patternWidth: "pattern-width",
-	patternGrid: "table_pattern",
-	patternCellName: "pattern-cell",
-	button_createPattern: "btn_make-grid",
-	button_savePattern: "btn_save-pattern",
-	button_loadPattern: "btn_load-pattern",
-	appContainer: "app-content",
-	region_settings: "region-settings",
-	region_pattern: "region-pattern",
-	region_brush: "region-brush",
-	errorDisplay: "error-display",
-	errorMessage: "error-message"
-}
 
-// Wrapped defaults
-const defaults =
-{
-	cellColour: "white",
-	patternHeight: "3",
-	patternWidth: "3",
-	cellId: (row : number, column : number) => `row${row}-col${column}`
-}
 
 // -*-*-*-*-*-*-*-*-*-
 // Model
@@ -394,49 +366,49 @@ function write(thingToWrite : string)
 
 
 (function initPage()
-			{
-				// Initialization order:
-				// 1. set defaults on page
-				// 2. initialize program state object
-				// 3. hook up handlers
+{
+	// Initialization order:
+	// 1. set defaults on page
+	// 2. initialize program state object
+	// 3. hook up handlers
 
-				// temp content for initial brush construction
-				const element_blue = document.getElementById("blue");
-				const elementGreen = document.getElementById("green");
-				const elementPurple = document.getElementById("purple");
+	// temp content for initial brush construction
+	const element_blue = document.getElementById("blue");
+	const elementGreen = document.getElementById("green");
+	const elementPurple = document.getElementById("purple");
 
-				element_blue.addEventListener("click", makeCurrentBlue);
-				elementGreen.addEventListener("click", makeCurrentGreen);
-				elementPurple.addEventListener("click", makeCurrentPurple);
-				// end of temp content
+	element_blue.addEventListener("click", makeCurrentBlue);
+	elementGreen.addEventListener("click", makeCurrentGreen);
+	elementPurple.addEventListener("click", makeCurrentPurple);
+	// end of temp content
 
-				// set the default input values for pattern height and width
-				(document.getElementById(names.patternHeight)).value = defaults.patternHeight;
-				(document.getElementById(names.patternWidth)).value = defaults.patternWidth;
+	// set the default input values for pattern height and width
+	(<HTMLInputElement> document.getElementById(names.patternHeight)).value = defaults.patternHeight;
+	(<HTMLInputElement> document.getElementById(names.patternWidth)).value = defaults.patternWidth;
 
-				// set default brush styles
-				const currentBrushElement = document.getElementById("current-brush");
-				currentBrushElement.style.background = defaults.cellColour;
+	// set default brush styles
+	const currentBrushElement = document.getElementById("current-brush");
+	currentBrushElement.style.background = defaults.cellColour;
 
-				// create state object
-				currentState = new ProgramState();
+	// create state object
+	currentState = new ProgramState();
 
 
-				// hook up handlers for key events
-				window.addEventListener("keydown", onKeyDown_doc, false);
-				window.addEventListener("keyup", onKeyUp_doc, false);
+	// hook up handlers for key events
+	window.addEventListener("keydown", onKeyDown_doc, false);
+	window.addEventListener("keyup", onKeyUp_doc, false);
 
-				// hook up handler for clicking the button to swap match mode
-				document.getElementById(names.isMatchBrush).addEventListener("click", swapMatchMode, false);
+	// hook up handler for clicking the button to swap match mode
+	document.getElementById(names.isMatchBrush).addEventListener("click", swapMatchMode, false);
 
-				// hook up handler for the button to create a new pattern
-				let button_makePattern = document.getElementById(names.button_createPattern);
-				button_makePattern.addEventListener("click", currentState.createNewPattern);
+	// hook up handler for the button to create a new pattern
+	let button_makePattern = document.getElementById(names.button_createPattern);
+	button_makePattern.addEventListener("click", currentState.createNewPattern);
 
-				// hook up handlers for buttons to write and read a pattern
-				let button_savePattern = document.getElementById(names.button_savePattern)
-				button_savePattern.addEventListener("click", writePattern);
+	// hook up handlers for buttons to write and read a pattern
+	let button_savePattern = document.getElementById(names.button_savePattern)
+	button_savePattern.addEventListener("click", writePattern);
 
-				let button_loadPattern = document.getElementById(names.button_loadPattern)
-				button_loadPattern.addEventListener("click", readPattern);
-			})();
+	let button_loadPattern = document.getElementById(names.button_loadPattern)
+	button_loadPattern.addEventListener("click", readPattern);
+})();

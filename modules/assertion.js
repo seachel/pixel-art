@@ -1,8 +1,9 @@
-export { assertion };
+import { names } from './application-constants.js';
+export { _assertion as assertion };
 // Use the assertions below to create pre-conditions, post-conditions, or any other assertions where breaking execution is the preferred behaviour when not true
 // How to know when to use: consider it whenever creating a new variable
 // use isNum check on string before using `Number` function to get more information
-export const assertion = {
+export const _assertion = {
     isEqual: (checkVal1, checkVal2) => {
         if (checkVal1 !== checkVal2) {
             throwIt(`${checkVal1} != ${checkVal2}.`);
@@ -42,21 +43,6 @@ export const assertion = {
         }
     }
 };
-// Exception handling for this page
-function throwIt(exceptionMsg) {
-    console.log(exceptionMsg);
-    let errorDisplayElement = document.getElementById(names.errorDisplay);
-    // If an element for displaying errors is not yet on the page, create it
-    if (errorDisplayElement === null || errorDisplayElement === undefined) {
-        errorDisplayElement = document.createElement("div");
-        errorDisplayElement.id = names.errorDisplay;
-        document.body.appendChild(errorDisplayElement);
-    }
-    let newMessage = document.createElement("div");
-    newMessage.classList.add(names.errorMessage);
-    newMessage.textContent = exceptionMsg;
-    errorDisplayElement.appendChild(newMessage);
-}
 // Exception handling for this page
 function throwIt(exceptionMsg) {
     console.log(exceptionMsg);
