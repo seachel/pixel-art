@@ -1,8 +1,7 @@
 /* Notes:
 - if used for assertions in code, when a thing is thrown, either use or create an error region on the page
 */
-function assert(value, message) {
-    if (message === void 0) { message = "NO WORK."; }
+function assert(value, message = "NO WORK.") {
     if (value) {
         return true;
     }
@@ -11,7 +10,7 @@ function assert(value, message) {
     }
 }
 function someThingTest() {
-    var moo = "hallo";
+    let moo = "hallo";
     assert(moo == "hfallo", "Expected to be 'hallo'");
 }
 someThingTest();

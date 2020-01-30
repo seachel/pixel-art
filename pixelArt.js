@@ -46,57 +46,57 @@ Notes:
 // Use the assertions below to create pre-conditions, post-conditions, or any other assertions where breaking execution is the preferred behaviour when not true
 // How to know when to use: consider it whenever creating a new variable
 // use isNum check on string before using `Number` function to get more information
-var assertion = {
-    isEqual: function (checkVal1, checkVal2) {
+const assertion = {
+    isEqual: (checkVal1, checkVal2) => {
         if (checkVal1 !== checkVal2) {
-            throwIt(checkVal1 + " != " + checkVal2 + ".");
+            throwIt(`${checkVal1} != ${checkVal2}.`);
         }
     },
-    isNum: function (checkVal) {
+    isNum: (checkVal) => {
         if (isNaN(Number(checkVal))) {
-            throwIt(checkVal + " is not a number.");
+            throwIt(`${checkVal} is not a number.`);
         }
     },
-    isNonNegative: function (checkVal) {
+    isNonNegative: (checkVal) => {
         if (isNaN(checkVal)) {
-            throwIt(checkVal + " passed to check non-negative :(");
+            throwIt(`${checkVal} passed to check non-negative :(`);
         }
         if (checkVal < 0) {
-            throwIt(checkVal + " should be nonnegative");
+            throwIt(`${checkVal} should be nonnegative`);
         }
     },
-    isNotNull: function (checkVal) {
+    isNotNull: (checkVal) => {
         if (checkVal === null) {
-            throwIt(checkVal + " is null.");
+            throwIt(`${checkVal} is null.`);
         }
     },
-    isNotUndefined: function (checkVal) {
+    isNotUndefined: (checkVal) => {
         if (checkVal === undefined) {
-            throwIt(checkVal + " is undefined.");
+            throwIt(`${checkVal} is undefined.`);
         }
     },
-    isNonempty: function (checkArray) {
+    isNonempty: (checkArray) => {
         if (checkArray.length === 0) {
-            throwIt(checkArray + " is an empty array.");
+            throwIt(`${checkArray} is an empty array.`);
         }
     },
-    hasLength: function (checkArray, length) {
+    hasLength: (checkArray, length) => {
         if (checkArray.length !== length) {
-            throwIt(checkArray + " has length " + checkArray.length + " instead of desired length " + length);
+            throwIt(`${checkArray} has length ${checkArray.length} instead of desired length ${length}`);
         }
     }
 };
 // Exception handling for this page
 function throwIt(exceptionMsg) {
     console.log(exceptionMsg);
-    var errorDisplayElement = document.getElementById(names.errorDisplay);
+    let errorDisplayElement = document.getElementById(names.errorDisplay);
     // If an element for displaying errors is not yet on the page, create it
     if (errorDisplayElement === null || errorDisplayElement === undefined) {
         errorDisplayElement = document.createElement("div");
         errorDisplayElement.id = names.errorDisplay;
         document.body.appendChild(errorDisplayElement);
     }
-    var newMessage = document.createElement("div");
+    let newMessage = document.createElement("div");
     newMessage.classList.add(names.errorMessage);
     newMessage.textContent = exceptionMsg;
     errorDisplayElement.appendChild(newMessage);
@@ -105,7 +105,7 @@ function throwIt(exceptionMsg) {
 // Below is an interface for id and class names shared between HTML, TS/JS, and CSS
 // Only use the fields in name in this file for easier referencing and renaming later
 // If changing any of the strings, be sure they are also updated in the TS and CSS files
-var names = {
+const names = {
     currentBrush: "current-brush",
     isMatchBrush: "is-match-brush",
     patternHeight: "pattern-height",
@@ -123,11 +123,11 @@ var names = {
     errorMessage: "error-message"
 };
 // Wrapped defaults
-var defaults = {
+const defaults = {
     cellColour: "white",
     patternHeight: "3",
     patternWidth: "3",
-    cellId: function (row, column) { return "row" + row + "-col" + column; }
+    cellId: (row, column) => `row${row}-col${column}`
 };
 // -*-*-*-*-*-*-*-*-*-
 // Model
@@ -135,14 +135,14 @@ var defaults = {
 // -------
 // Pattern data
 // -------
-var Pattern = /** @class */ (function () {
-    function Pattern(height, width) {
+class Pattern {
+    constructor(height, width) {
         // TODO: Check that inputs are valid numbers, not NaN
         assertion.isNonNegative(height);
         assertion.isNonNegative(width);
         // TODO: this should be front-end validation rather than breaking?
         // write pattern HTML
-        var patternContainer = document.getElementById(names.region_pattern);
+        let patternContainer = document.getElementById(names.region_pattern);
         patternContainer.innerHTML = this.getPatternHTML(height, width);
         // initialize the HTML elements corresponding to cells in the grid representing the pattern
         this.initializeCellViews();
@@ -150,53 +150,59 @@ var Pattern = /** @class */ (function () {
         this.cells = this.initializeCells(height, width);
     }
     // TODO: update function with functions to write html elements
-    Pattern.prototype.getPatternHTML = function (height, width) {
+    getPatternHTML(height, width) {
         // get element where the pattern will be written
         // build the text for that element
-        var patternHTML = "<table id=\"" + names.patternGrid + "\">\n\t\t";
-        for (var i = 0; i < height; i++) {
-            patternHTML += "<tr>\n\t\t\t";
-            for (var j = 0; j < width; j++) {
-                patternHTML += "<td id=\"" + defaults.cellId(i, j) + "\" class=\"" + names.patternCellName + "\">\n\t\t\t\t-\n\t\t\t\t</td>\n\t\t\t\t";
+        let patternHTML = `<table id="${names.patternGrid}">
+		`;
+        for (let i = 0; i < height; i++) {
+            patternHTML += `<tr>
+			`;
+            for (let j = 0; j < width; j++) {
+                patternHTML += `<td id="${defaults.cellId(i, j)}" class="${names.patternCellName}">
+				-
+				</td>
+				`;
                 // Note: "-" is temp content for cell
             }
-            patternHTML += "</tr>\n\t\t\t";
+            patternHTML += `</tr>
+			`;
         }
-        patternHTML += "</table>\n\t\t";
+        patternHTML += `</table>
+		`;
         return patternHTML;
-    };
-    Pattern.prototype.initializeCells = function (height, width) {
+    }
+    initializeCells(height, width) {
         // cells is column of rows, so
         //   outer loop goes along/down the column
         //   the inner loop goes across each row
-        var cells = [];
-        for (var i = 0; i < height; i++) {
-            var row = [];
-            for (var j = 0; j < width; j++) {
+        let cells = [];
+        for (let i = 0; i < height; i++) {
+            let row = [];
+            for (let j = 0; j < width; j++) {
                 row.push(defaults.cellColour);
             }
             cells.push(row);
         }
         return cells;
-    };
-    Pattern.prototype.initializeCellViews = function () {
+    }
+    initializeCellViews() {
         // Add event listener to cells
-        var viewCells = document.getElementsByClassName(names.patternCellName);
+        const viewCells = document.getElementsByClassName(names.patternCellName);
         for (var i = 0; i < viewCells.length; i++) {
-            var currentCell = viewCells[i];
+            let currentCell = viewCells[i];
             // hook up click event
             currentCell.addEventListener("click", onCellClick, false);
             // style background with default
             currentCell.style.background = defaults.cellColour;
         }
-    };
-    return Pattern;
-}());
+    }
+}
 // -------
 // Program state
 // -------
-var ProgramState = /** @class */ (function () {
-    function ProgramState() {
+class ProgramState {
+    constructor() {
         // set the display pattern
         this.createNewPattern();
         // set the default value for whether or not we are in match mode for setting the brush
@@ -204,38 +210,34 @@ var ProgramState = /** @class */ (function () {
         // set the current brush to the default cell colour
         this.brush = defaults.cellColour;
     }
-    Object.defineProperty(ProgramState.prototype, "displayPattern", {
-        get: function () {
-            return this._displayPattern;
-        },
-        set: function (value) {
-            // TODO: update view
-            this._displayPattern = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
+    get displayPattern() {
+        return this._displayPattern;
+    }
+    set displayPattern(value) {
+        // TODO: update view
+        this._displayPattern = value;
+    }
     // Sets the displayed pattern field to a new pattern object according to the input dimensions on the page
-    ProgramState.prototype.createNewPattern = function () {
+    createNewPattern() {
         // Get elements containing dimension inputs and assign to input element type
-        var patternHeightInputElement = document.getElementById(names.patternHeight);
-        var patternWidthInputElement = document.getElementById(names.patternWidth);
+        let patternHeightInputElement = document.getElementById(names.patternHeight);
+        let patternWidthInputElement = document.getElementById(names.patternWidth);
         // Get input values as strings
-        var patternHeightInput = patternHeightInputElement.value;
-        var patternWidthInput = patternWidthInputElement.value;
+        let patternHeightInput = patternHeightInputElement.value;
+        let patternWidthInput = patternWidthInputElement.value;
         // Check that pattern dimension values are numbers
         assertion.isNum(patternHeightInput);
         assertion.isNum(patternWidthInput);
-        var patternHeight = Number(patternHeightInput);
-        var patternWidth = Number(patternWidthInput);
+        let patternHeight = Number(patternHeightInput);
+        let patternWidth = Number(patternWidthInput);
         this.displayPattern = new Pattern(patternHeight, patternWidth);
-    };
+    }
     // applies the current brush to the passed cell element and its corresponding element in the data grid
-    ProgramState.prototype.applyBrush = function (cell) {
+    applyBrush(cell) {
         cell.style.background = currentState.brush;
         // regular expression to match the coordinates from a cell id
-        var matchExpression = /row(\d+)-col(\d+)/g;
-        var matches = matchExpression.exec(cell.id);
+        let matchExpression = /row(\d+)-col(\d+)/g;
+        let matches = matchExpression.exec(cell.id);
         // assert that matches got an array of three elements
         // the first is the full string match, second and third are coordinates
         assertion.hasLength(matches, 3);
@@ -243,28 +245,27 @@ var ProgramState = /** @class */ (function () {
         assertion.isNum(matches[1]);
         assertion.isNum(matches[2]);
         // extract the grid coordinates from the match above
-        var rowIndex = Number(matches[1]);
-        var columnIndex = Number(matches[2]);
+        let rowIndex = Number(matches[1]);
+        let columnIndex = Number(matches[2]);
         // set the brush of the corresponding cell in the model to current brush
         this.displayPattern.cells[rowIndex][columnIndex] = this.brush;
-    };
-    ProgramState.prototype.setBrush = function (brush) {
+    }
+    setBrush(brush) {
         // TODO: checks on brush? is a valid background colour? this will change as the meaning of brush changes
         this.brush = brush;
-        var currentBrush = document.getElementById(names.currentBrush);
+        let currentBrush = document.getElementById(names.currentBrush);
         assertion.isNotNull(currentBrush);
         assertion.isNotUndefined(currentBrush);
         currentBrush.style.background = brush;
-    };
-    return ProgramState;
-}());
+    }
+}
 var currentState;
 function writePattern() {
-    var fileString = JSON.stringify(currentState.displayPattern);
+    let fileString = JSON.stringify(currentState.displayPattern);
     window.localStorage.setItem("saved pattern", fileString);
 }
 function readPattern() {
-    var fileString = window.localStorage.getItem("saved pattern");
+    let fileString = window.localStorage.getItem("saved pattern");
     // TODO: check that valid JSON?
     // TODO: check that parsed JSON has the desired fields?
     // TODO: it's possible to update the display pattern here, but it doesn't update the field on currentState and doesn't cause any persistent update to the model; need function to update it, and make the field private? then this function should be outside?
@@ -296,7 +297,7 @@ function onKeyUp_doc(e) {
     }
 }
 function swapMatchMode() {
-    var brushControl = document.getElementById(names.isMatchBrush);
+    let brushControl = document.getElementById(names.isMatchBrush);
     if (currentState.isMatchSelection) {
         // turn it off and change UI as necessary
         currentState.isMatchSelection = false;
@@ -330,6 +331,6 @@ function makeCurrentPurple() {
 }
 // Note: used for testing
 function write(thingToWrite) {
-    var dumpElement = document.getElementById("dump");
+    let dumpElement = document.getElementById("dump");
     dumpElement.textContent += "\n" + thingToWrite;
 }
