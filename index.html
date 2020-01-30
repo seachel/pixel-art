@@ -61,56 +61,7 @@
 		<div id="dump">
 
 		</div>
-		<script src="pixelArt.js"></script>
-		<script>
-			(function initPage()
-			{
-				// Initialization order:
-				// 1. set defaults on page
-				// 2. initialize program state object
-				// 3. hook up handlers
-
-				// temp content for initial brush construction
-				const element_blue = document.getElementById("blue");
-				const elementGreen = document.getElementById("green");
-				const elementPurple = document.getElementById("purple");
-
-				element_blue.addEventListener("click", makeCurrentBlue);
-				elementGreen.addEventListener("click", makeCurrentGreen);
-				elementPurple.addEventListener("click", makeCurrentPurple);
-				// end of temp content
-
-				// set the default input values for pattern height and width
-				(document.getElementById(names.patternHeight)).value = defaults.patternHeight;
-				(document.getElementById(names.patternWidth)).value = defaults.patternWidth;
-
-				// set default brush styles
-				const currentBrushElement = document.getElementById("current-brush");
-				currentBrushElement.style.background = defaults.cellColour;
-
-				// create state object
-				currentState = new ProgramState();
-
-
-				// hook up handlers for key events
-				window.addEventListener("keydown", onKeyDown_doc, false);
-				window.addEventListener("keyup", onKeyUp_doc, false);
-
-				// hook up handler for clicking the button to swap match mode
-				document.getElementById(names.isMatchBrush).addEventListener("click", swapMatchMode, false);
-
-				// hook up handler for the button to create a new pattern
-				let button_makePattern = document.getElementById(names.button_createPattern);
-				button_makePattern.addEventListener("click", currentState.createNewPattern);
-
-				// hook up handlers for buttons to write and read a pattern
-				let button_savePattern = document.getElementById(names.button_savePattern)
-				button_savePattern.addEventListener("click", writePattern);
-
-				let button_loadPattern = document.getElementById(names.button_loadPattern)
-				button_loadPattern.addEventListener("click", readPattern);
-			})();
-		</script>
+		<script type="module" src="pixelArt.js"></script>
 
 	</body>
 </html>
