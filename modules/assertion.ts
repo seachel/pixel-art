@@ -1,4 +1,5 @@
 import { names, defaults } from './application-constants.js';
+
 export { _assertion as assertion };
 
 // Use the assertions below to create pre-conditions, post-conditions, or any other assertions where breaking execution is the preferred behaviour when not true
