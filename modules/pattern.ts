@@ -1,3 +1,5 @@
+import { isDebug, writeDebug } from './debug.js';
+
 import { assertion } from './assertion.js';
 import { names, defaults } from './application-constants.js';
 
