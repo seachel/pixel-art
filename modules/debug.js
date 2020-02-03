@@ -1,7 +1,7 @@
-export { _isDebug as isDebug, _writeDebug as writeDebug };
-export const _isDebug = true;
+export { _writeDebug as writeDebug };
+const isDebug = true;
 export function _writeDebug(debugObject = {}, debugMessage = "(no message provided)") {
-    if (_isDebug) {
+    if (isDebug) {
         console.log(`***
 		Debug note:
 		${debugMessage}
