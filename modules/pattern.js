@@ -1,13 +1,13 @@
 import { assertion } from './assertion.js';
 import { names, defaults } from './application-constants.js';
-export { _Pattern as Pattern };
+export { Pattern };
 // -*-*-*-*-*-*-*-*-*-
 // Model
 // -*-*-*-*-*-*-*-*-*-
 // -------
 // Pattern data
 // -------
-export class _Pattern {
+class Pattern {
     constructor(height, width, onCellClick) {
         // TODO: Check that inputs are valid numbers, not NaN
         assertion.isNonNegative(height);

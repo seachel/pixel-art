@@ -1,9 +1,9 @@
 import { defaults } from './application-constants.js';
-export { _ProgramState as ProgramState };
+export { ProgramState };
 // -------
 // Program state
 // -------
-export class _ProgramState {
+class ProgramState {
     constructor(createNewPattern) {
         // set the display pattern
         this.createNewPattern = createNewPattern;

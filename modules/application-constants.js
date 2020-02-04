@@ -1,8 +1,8 @@
-export { _names as names, _defaults as defaults };
+export { names, defaults };
 // Below is an interface for id and class names shared between HTML, TS/JS, and CSS
 // Only use the fields in name in this file for easier referencing and renaming later
 // If changing any of the strings, be sure they are also updated in the TS and CSS files
-export const _names = {
+const names = {
     currentBrush: "current-brush",
     isMatchBrush: "is-match-brush",
     patternHeight: "pattern-height",
@@ -20,7 +20,7 @@ export const _names = {
     errorMessage: "error-message"
 };
 // Wrapped defaults
-export const _defaults = {
+const defaults = {
     cellColour: "white",
     patternHeight: "3",
     patternWidth: "3",

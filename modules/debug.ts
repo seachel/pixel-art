@@ -1,8 +1,8 @@
-export { _writeDebug as writeDebug };
+export { writeDebug };
 
 const isDebug = true;
 
-export function _writeDebug(debugObject = {}, debugMessage = "(no message provided)")
+function writeDebug(debugObject = {}, debugMessage = "(no message provided)")
 {
 	if (isDebug)
 	{

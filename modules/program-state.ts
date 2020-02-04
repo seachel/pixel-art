@@ -4,13 +4,13 @@ import { names, defaults } from './application-constants.js';
 import { Pattern } from './pattern.js';
 import { assertion } from './assertion.js';
 
-export { _ProgramState as ProgramState };
+export { ProgramState };
 
 // -------
 // Program state
 // -------
 
-export class _ProgramState
+class ProgramState
 {
 	private _displayPattern : Pattern;
 	get displayPattern() : Pattern
