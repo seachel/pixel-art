@@ -23,16 +23,11 @@ class ProgramState
 		this._displayPattern = value;
 	}
 
-	createNewPattern : () => void;
 	isMatchSelection : Boolean;
 	brush : string;
 
-	constructor(createNewPattern)
+	constructor()
 	{
-		// set the display pattern
-		this.createNewPattern = createNewPattern;
-		this.createNewPattern();
-
 		// set the default value for whether or not we are in match mode for setting the brush
 		this.isMatchSelection = false;
 
