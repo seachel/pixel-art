@@ -1,4 +1,6 @@
 // Imports:
+import { writeDebug } from './modules/debug.js';
+
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
 import { Pattern } from './modules/pattern.js';
@@ -55,6 +57,7 @@ Notes:
 
 var currentState : ProgramState;
 
+// Below are functions to update the page - should be in a model? encapsulate?
 
 function writePattern()
 {
@@ -72,6 +75,27 @@ function readPattern()
 
 	// TODO: it's possible to update the display pattern here, but it doesn't update the field on currentState and doesn't cause any persistent update to the model; need function to update it, and make the field private? then this function should be outside?
 	currentState.displayPattern = JSON.parse(fileString);
+}
+
+// Sets the displayed pattern field to a new pattern object according to the input dimensions on the page
+function createNewPattern()
+{
+	// Get elements containing dimension inputs and assign to input element type
+	let patternHeightInputElement = <HTMLInputElement> document.getElementById(names.patternHeight);
+	let patternWidthInputElement = <HTMLInputElement> document.getElementById(names.patternWidth);
+
+	// Get input values as strings
+	let patternHeightInput : string = patternHeightInputElement.value;
+	let patternWidthInput : string = patternWidthInputElement.value;
+
+	// Check that pattern dimension values are numbers
+	assertion.isNum(patternHeightInput);
+	assertion.isNum(patternWidthInput);
+
+	let patternHeight : number = Number(patternHeightInput);
+	let patternWidth : number = Number(patternWidthInput);
+
+	this.displayPattern = new Pattern(patternHeight, patternWidth, onCellClick);
 }
 
 
@@ -139,26 +163,73 @@ function onCellClick(e : Event)
 
 	if (currentState.isMatchSelection)
 	{
-		currentState.setBrush(targetElement.style.background);
+		setBrush(targetElement.style.background);
 	}
 	else
 	{
-		currentState.applyBrush(targetElement, currentState.brush);
+		applyBrush(targetElement, currentState.brush);
 	}
+}
+
+
+
+// applies the current brush to the passed cell element and its corresponding element in the data grid
+function applyBrush(cell : HTMLElement, brush : string)
+{
+	cell.style.background = brush;
+
+	// regular expression to match the coordinates from a cell id
+	let matchExpression = /row(\d+)-col(\d+)/g;
+	let matches = matchExpression.exec(cell.id);
+
+	// assert that matches got an array of three elements
+	// the first is the full string match, second and third are coordinates
+	assertion.hasLength(matches, 3);
+
+	// assert that the second and third matches are numbers
+	assertion.isNum(matches[1]);
+	assertion.isNum(matches[2]);
+
+	// extract the grid coordinates from the match above
+	let rowIndex = Number(matches[1]);
+	let columnIndex = Number(matches[2]);
+
+	// set the brush of the corresponding cell in the model to current brush
+	currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
+
+	// Checking for debugging:
+	writeDebug(brush, "Updated brush:");
+	writeDebug(rowIndex, "New row index");
+	writeDebug(columnIndex, "New column index:");
+	writeDebug(currentState.displayPattern.cells, "Pattern model after update:");
+}
+
+function setBrush(brush : string)
+{
+	// TODO: checks on brush? is a valid background colour? this will change as the meaning of brush changes
+
+	currentState.brush = brush;
+
+	let currentBrush = document.getElementById(names.currentBrush);
+
+	assertion.isNotNull(currentBrush);
+	assertion.isNotUndefined(currentBrush);
+
+	currentBrush.style.background = brush;
 }
 
 
 // Temp: hook handlers to pallet items
 function makeCurrentBlue() {
-	currentState.setBrush("blue");
+	setBrush("blue");
 }
 
 function makeCurrentGreen() {
-	currentState.setBrush("green");
+	setBrush("green");
 }
 
 function makeCurrentPurple() {
-	currentState.setBrush("rgb(169, 84, 255)");
+	setBrush("rgb(169, 84, 255)");
 }
 
 // Note: used for testing
@@ -178,11 +249,11 @@ function write(thingToWrite : string)
 	// 3. hook up handlers
 
 	// temp content for initial brush construction
-	const element_blue = document.getElementById("blue");
+	const elementBlue = document.getElementById("blue");
 	const elementGreen = document.getElementById("green");
 	const elementPurple = document.getElementById("purple");
 
-	element_blue.addEventListener("click", makeCurrentBlue);
+	elementBlue.addEventListener("click", makeCurrentBlue);
 	elementGreen.addEventListener("click", makeCurrentGreen);
 	elementPurple.addEventListener("click", makeCurrentPurple);
 	// end of temp content
@@ -196,7 +267,7 @@ function write(thingToWrite : string)
 	currentBrushElement.style.background = defaults.cellColour;
 
 	// create state object
-	currentState = new ProgramState();
+	currentState = new ProgramState(createNewPattern);
 
 
 	// hook up handlers for key events

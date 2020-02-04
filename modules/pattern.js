@@ -8,11 +8,13 @@ export { _Pattern as Pattern };
 // Pattern data
 // -------
 export class _Pattern {
-    constructor(height, width) {
+    constructor(height, width, onCellClick) {
         // TODO: Check that inputs are valid numbers, not NaN
         assertion.isNonNegative(height);
         assertion.isNonNegative(width);
         // TODO: this should be front-end validation rather than breaking?
+        // provide the passed handler to use when a cell is clicked
+        this.onCellClick = onCellClick;
         // write pattern HTML
         let patternContainer = document.getElementById(names.region_pattern);
         patternContainer.innerHTML = this.getPatternHTML(height, width);

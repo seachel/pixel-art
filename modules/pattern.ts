@@ -1,4 +1,4 @@
-import { isDebug, writeDebug } from './debug.js';
+import { writeDebug } from './debug.js';
 
 import { assertion } from './assertion.js';
 import { names, defaults } from './application-constants.js';
@@ -18,12 +18,15 @@ export class _Pattern
 	cells : string[][];
 	onCellClick : (e : Event) => void
 
-	constructor(height : number, width : number)
+	constructor(height : number, width : number, onCellClick : (e : Event) => void)
 	{
 		// TODO: Check that inputs are valid numbers, not NaN
 		assertion.isNonNegative(height);
 		assertion.isNonNegative(width);
 		// TODO: this should be front-end validation rather than breaking?
+
+		// provide the passed handler to use when a cell is clicked
+		this.onCellClick = onCellClick;
 
 		// write pattern HTML
 		let patternContainer = document.getElementById(names.region_pattern)
