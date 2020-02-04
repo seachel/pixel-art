@@ -65,7 +65,7 @@ function readPattern() {
     currentState.displayPattern = JSON.parse(fileString);
 }
 // Sets the displayed pattern field to a new pattern object according to the input dimensions on the page
-function createNewPattern() {
+function inject_reference_createNewPattern() {
     // Get elements containing dimension inputs and assign to input element type
     let patternHeightInputElement = document.getElementById(names.patternHeight);
     let patternWidthInputElement = document.getElementById(names.patternWidth);
@@ -77,7 +77,19 @@ function createNewPattern() {
     assertion.isNum(patternWidthInput);
     let patternHeight = Number(patternHeightInput);
     let patternWidth = Number(patternWidthInput);
-    this.displayPattern = new Pattern(patternHeight, patternWidth, onCellClick);
+    this.displayPattern = new Pattern(patternHeight, patternWidth, inject_pattern_onCellClick);
+}
+// TODO: this function below is passed to the pattern class
+// TODO: other way to organize? this function needs to access the current state
+// Function to apply the brush to the passed event's target
+function inject_pattern_onCellClick(e) {
+    var targetElement = e.target;
+    if (currentState.isMatchSelection) {
+        setBrush(targetElement.style.background);
+    }
+    else {
+        applyBrush(targetElement, currentState.brush);
+    }
 }
 // if match selection mode is on, then don't colour selected square but instead set the brush to its colour
 function onKeyDown_doc(e) {
@@ -117,18 +129,6 @@ function swapMatchMode() {
         brushControl.style.background = "yellow";
     }
 }
-// TODO: this function below is passed to the pattern class
-// TODO: other way to organize? this function needs to access the current state
-// Function to apply the brush to the passed event's target
-function onCellClick(e) {
-    var targetElement = e.target;
-    if (currentState.isMatchSelection) {
-        setBrush(targetElement.style.background);
-    }
-    else {
-        applyBrush(targetElement, currentState.brush);
-    }
-}
 // applies the current brush to the passed cell element and its corresponding element in the data grid
 function applyBrush(cell, brush) {
     cell.style.background = brush;
@@ -147,9 +147,6 @@ function applyBrush(cell, brush) {
     // set the brush of the corresponding cell in the model to current brush
     currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
     // Checking for debugging:
-    writeDebug(brush, "Updated brush:");
-    writeDebug(rowIndex, "New row index");
-    writeDebug(columnIndex, "New column index:");
     writeDebug(currentState.displayPattern.cells, "Pattern model after update:");
 }
 function setBrush(brush) {
@@ -195,7 +192,7 @@ function write(thingToWrite) {
     const currentBrushElement = document.getElementById("current-brush");
     currentBrushElement.style.background = defaults.cellColour;
     // create state object
-    currentState = new ProgramState(createNewPattern);
+    currentState = new ProgramState(inject_reference_createNewPattern);
     // hook up handlers for key events
     window.addEventListener("keydown", onKeyDown_doc, false);
     window.addEventListener("keyup", onKeyUp_doc, false);

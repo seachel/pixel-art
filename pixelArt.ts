@@ -78,7 +78,7 @@ function readPattern()
 }
 
 // Sets the displayed pattern field to a new pattern object according to the input dimensions on the page
-function createNewPattern()
+function inject_reference_createNewPattern()
 {
 	// Get elements containing dimension inputs and assign to input element type
 	let patternHeightInputElement = <HTMLInputElement> document.getElementById(names.patternHeight);
@@ -95,8 +95,28 @@ function createNewPattern()
 	let patternHeight : number = Number(patternHeightInput);
 	let patternWidth : number = Number(patternWidthInput);
 
-	this.displayPattern = new Pattern(patternHeight, patternWidth, onCellClick);
+	this.displayPattern = new Pattern(patternHeight, patternWidth, inject_pattern_onCellClick);
 }
+
+
+// TODO: this function below is passed to the pattern class
+// TODO: other way to organize? this function needs to access the current state
+// Function to apply the brush to the passed event's target
+function inject_pattern_onCellClick(e : Event)
+{
+	var targetElement = <HTMLElement>e.target;
+
+	if (currentState.isMatchSelection)
+	{
+		setBrush(targetElement.style.background);
+	}
+	else
+	{
+		applyBrush(targetElement, currentState.brush);
+	}
+}
+
+
 
 
 // if match selection mode is on, then don't colour selected square but instead set the brush to its colour
@@ -154,23 +174,6 @@ function swapMatchMode()
 	}
 }
 
-// TODO: this function below is passed to the pattern class
-// TODO: other way to organize? this function needs to access the current state
-// Function to apply the brush to the passed event's target
-function onCellClick(e : Event)
-{
-	var targetElement = <HTMLElement>e.target;
-
-	if (currentState.isMatchSelection)
-	{
-		setBrush(targetElement.style.background);
-	}
-	else
-	{
-		applyBrush(targetElement, currentState.brush);
-	}
-}
-
 
 
 // applies the current brush to the passed cell element and its corresponding element in the data grid
@@ -198,9 +201,6 @@ function applyBrush(cell : HTMLElement, brush : string)
 	currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
 
 	// Checking for debugging:
-	writeDebug(brush, "Updated brush:");
-	writeDebug(rowIndex, "New row index");
-	writeDebug(columnIndex, "New column index:");
 	writeDebug(currentState.displayPattern.cells, "Pattern model after update:");
 }
 
@@ -267,7 +267,7 @@ function write(thingToWrite : string)
 	currentBrushElement.style.background = defaults.cellColour;
 
 	// create state object
-	currentState = new ProgramState(createNewPattern);
+	currentState = new ProgramState(inject_reference_createNewPattern);
 
 
 	// hook up handlers for key events
