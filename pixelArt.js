@@ -3,7 +3,7 @@ import { writeDebug, writeToPage } from './modules/debug.js';
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
 import { Pattern } from './modules/pattern.js';
-import * as AppState from './modules/program-state.js';
+import * as State from './modules/program-state.js';
 /*
 TODO:
 - Organize!
@@ -36,11 +36,11 @@ function createNewPattern(patternHeight, patternWidth) {
 // Function to apply the brush to the passed event's target
 function inject_pattern_onCellClick(e) {
     var targetElement = e.target;
-    if (AppState.getProgramState().isMatchSelection) {
+    if (State.getCurrentState().isMatchSelection) {
         setBrush(targetElement.style.background);
     }
     else {
-        applyBrush(targetElement, AppState.getProgramState().brush);
+        applyBrush(targetElement, State.getCurrentState().brush);
     }
 }
 // applies the current brush to the passed cell element and its corresponding element in the data grid
@@ -59,13 +59,13 @@ function applyBrush(cell, brush) {
     let rowIndex = Number(matches[1]);
     let columnIndex = Number(matches[2]);
     // set the brush of the corresponding cell in the model to current brush
-    AppState.getProgramState().displayPattern.cells[rowIndex][columnIndex] = AppState.getProgramState().brush;
+    State.getCurrentState().displayPattern.cells[rowIndex][columnIndex] = State.getCurrentState().brush;
     // Checking for debugging:
-    writeDebug(AppState.getProgramState().displayPattern.cells, "Pattern model after update:");
+    writeDebug(State.getCurrentState().displayPattern.cells, "Pattern model after update:");
 }
 function setBrush(brush) {
     // TODO: checks on brush? is a valid background colour? this will change as the meaning of brush changes
-    AppState.getProgramState().brush = brush;
+    State.getCurrentState().brush = brush;
     let currentBrush = document.getElementById(names.currentBrush);
     assertion.isNotNull(currentBrush);
     assertion.isNotUndefined(currentBrush);
@@ -73,7 +73,7 @@ function setBrush(brush) {
 }
 // Below are functions to update the page - should be in a model? encapsulate?
 function writePattern() {
-    let fileString = JSON.stringify(AppState.getProgramState().displayPattern);
+    let fileString = JSON.stringify(State.getCurrentState().displayPattern);
     window.localStorage.setItem("saved pattern", fileString);
 }
 function readPattern() {
@@ -81,18 +81,18 @@ function readPattern() {
     // TODO: check that valid JSON?
     // TODO: check that parsed JSON has the desired fields?
     // TODO: it's possible to update the display pattern here, but it doesn't update the field on currentState and doesn't cause any persistent update to the model; need function to update it, and make the field private? then this function should be outside?
-    AppState.getProgramState().displayPattern = JSON.parse(fileString);
+    State.getCurrentState().displayPattern = JSON.parse(fileString);
 }
 function swapMatchMode() {
     let brushControl = document.getElementById(names.isMatchBrush);
-    if (AppState.getProgramState().isMatchSelection) {
+    if (State.getCurrentState().isMatchSelection) {
         // turn it off and change UI as necessary
-        AppState.getProgramState().isMatchSelection = false;
+        State.getCurrentState().isMatchSelection = false;
         brushControl.style.background = defaults.cellColour;
     }
     else {
         // turn it on and change UI as necessary
-        AppState.getProgramState().isMatchSelection = true;
+        State.getCurrentState().isMatchSelection = true;
         brushControl.style.background = "yellow";
     }
 }
@@ -105,7 +105,7 @@ function onKeyDown_doc(e) {
     }
     // see keycode.info for more
     // if correct key pressed and match selection is off, turn on
-    if (e.keyCode === 83 && !AppState.getProgramState().isMatchSelection) {
+    if (e.keyCode === 83 && !State.getCurrentState().isMatchSelection) {
         swapMatchMode();
     }
 }
@@ -117,7 +117,7 @@ function onKeyUp_doc(e) {
     }
     // see keycode.info for more
     // if correct key released and match selection is on, turn off
-    if (e.keyCode === 83 && AppState.getProgramState().isMatchSelection) {
+    if (e.keyCode === 83 && State.getCurrentState().isMatchSelection) {
         swapMatchMode();
     }
 }
@@ -151,7 +151,7 @@ function makeCurrentPurple() {
     const currentBrushElement = document.getElementById("current-brush");
     currentBrushElement.style.background = defaults.cellColour;
     // create state object
-    AppState.setProgramState(new AppState.ProgramState(createNewPatternFromInputs));
+    State.setCurrentState(new State.ProgramState(createNewPatternFromInputs));
     // hook up handlers for key events
     window.addEventListener("keydown", onKeyDown_doc, false);
     window.addEventListener("keyup", onKeyUp_doc, false);
@@ -159,7 +159,7 @@ function makeCurrentPurple() {
     document.getElementById(names.isMatchBrush).addEventListener("click", swapMatchMode, false);
     // hook up handler for the button to create a new pattern
     let button_makePattern = document.getElementById(names.button_createPattern);
-    button_makePattern.addEventListener("click", () => AppState.getProgramState().displayPattern = createNewPatternFromInputs());
+    button_makePattern.addEventListener("click", () => State.getCurrentState().displayPattern = createNewPatternFromInputs());
     // hook up handlers for buttons to write and read a pattern
     let button_savePattern = document.getElementById(names.button_savePattern);
     button_savePattern.addEventListener("click", writePattern);

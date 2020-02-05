@@ -5,10 +5,10 @@ import { defaults } from './application-constants.js';
 // encapsulating the current state of the program in a local variable
 // accessor functions allow external modules to have controlled access to read and write to this value
 var currentState;
-export function setProgramState(newState) {
+export function setCurrentState(newState) {
     currentState = newState;
 }
-export function getProgramState() {
+export function getCurrentState() {
     return currentState;
 }
 export class ProgramState {

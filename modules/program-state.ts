@@ -11,11 +11,11 @@ import { assertion } from './assertion.js';
 // encapsulating the current state of the program in a local variable
 // accessor functions allow external modules to have controlled access to read and write to this value
 var currentState : ProgramState;
-export function setProgramState(newState : ProgramState) : void
+export function setCurrentState(newState : ProgramState) : void
 {
 	currentState = newState;
 }
-export function getProgramState() : ProgramState
+export function getCurrentState() : ProgramState
 {
 	return currentState;
 }

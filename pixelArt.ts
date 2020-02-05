@@ -4,8 +4,7 @@ import { writeDebug, writeToPage } from './modules/debug.js';
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
 import { Pattern } from './modules/pattern.js';
-import * as AppState from './modules/program-state.js';
-
+import * as State from './modules/program-state.js';
 
 /*
 TODO:
@@ -51,13 +50,13 @@ function inject_pattern_onCellClick(e : Event)
 {
 	var targetElement = <HTMLElement>e.target;
 
-	if (AppState.getProgramState().isMatchSelection)
+	if (State.getCurrentState().isMatchSelection)
 	{
 		setBrush(targetElement.style.background);
 	}
 	else
 	{
-		applyBrush(targetElement, AppState.getProgramState().brush);
+		applyBrush(targetElement, State.getCurrentState().brush);
 	}
 }
 
@@ -85,17 +84,17 @@ function applyBrush(cell : HTMLElement, brush : string)
 	let columnIndex = Number(matches[2]);
 
 	// set the brush of the corresponding cell in the model to current brush
-	AppState.getProgramState().displayPattern.cells[rowIndex][columnIndex] = AppState.getProgramState().brush;
+	State.getCurrentState().displayPattern.cells[rowIndex][columnIndex] = State.getCurrentState().brush;
 
 	// Checking for debugging:
-	writeDebug(AppState.getProgramState().displayPattern.cells, "Pattern model after update:");
+	writeDebug(State.getCurrentState().displayPattern.cells, "Pattern model after update:");
 }
 
 function setBrush(brush : string)
 {
 	// TODO: checks on brush? is a valid background colour? this will change as the meaning of brush changes
 
-	AppState.getProgramState().brush = brush;
+	State.getCurrentState().brush = brush;
 
 	let currentBrush = document.getElementById(names.currentBrush);
 
@@ -110,7 +109,7 @@ function setBrush(brush : string)
 
 function writePattern()
 {
-	let fileString = JSON.stringify(AppState.getProgramState().displayPattern);
+	let fileString = JSON.stringify(State.getCurrentState().displayPattern);
 
 	window.localStorage.setItem("saved pattern", fileString);
 }
@@ -123,7 +122,7 @@ function readPattern()
 	// TODO: check that parsed JSON has the desired fields?
 
 	// TODO: it's possible to update the display pattern here, but it doesn't update the field on currentState and doesn't cause any persistent update to the model; need function to update it, and make the field private? then this function should be outside?
-	AppState.getProgramState().displayPattern = JSON.parse(fileString);
+	State.getCurrentState().displayPattern = JSON.parse(fileString);
 }
 
 
@@ -131,17 +130,17 @@ function swapMatchMode()
 {
 	let brushControl = document.getElementById(names.isMatchBrush);
 
-	if (AppState.getProgramState().isMatchSelection)
+	if (State.getCurrentState().isMatchSelection)
 	{
 		// turn it off and change UI as necessary
-		AppState.getProgramState().isMatchSelection = false;
+		State.getCurrentState().isMatchSelection = false;
 
 		brushControl.style.background = defaults.cellColour;
 	}
 	else
 	{
 		// turn it on and change UI as necessary
-		AppState.getProgramState().isMatchSelection = true;
+		State.getCurrentState().isMatchSelection = true;
 
 		brushControl.style.background = "yellow";
 	}
@@ -161,7 +160,7 @@ function onKeyDown_doc(e : KeyboardEvent)
 
 	// see keycode.info for more
 	// if correct key pressed and match selection is off, turn on
-	if (e.keyCode === 83 && !AppState.getProgramState().isMatchSelection)
+	if (e.keyCode === 83 && !State.getCurrentState().isMatchSelection)
 	{
 		swapMatchMode();
 	}
@@ -178,7 +177,7 @@ function onKeyUp_doc(e : KeyboardEvent)
 
 	// see keycode.info for more
 	// if correct key released and match selection is on, turn off
-	if (e.keyCode === 83 && AppState.getProgramState().isMatchSelection)
+	if (e.keyCode === 83 && State.getCurrentState().isMatchSelection)
 	{
 		swapMatchMode();
 	}
@@ -226,7 +225,7 @@ function makeCurrentPurple() {
 	currentBrushElement.style.background = defaults.cellColour;
 
 	// create state object
-	AppState.setProgramState(new AppState.ProgramState(createNewPatternFromInputs));
+	State.setCurrentState(new State.ProgramState(createNewPatternFromInputs));
 
 
 	// hook up handlers for key events
@@ -238,7 +237,7 @@ function makeCurrentPurple() {
 
 	// hook up handler for the button to create a new pattern
 	let button_makePattern = document.getElementById(names.button_createPattern);
-	button_makePattern.addEventListener("click", () => AppState.getProgramState().displayPattern = createNewPatternFromInputs());
+	button_makePattern.addEventListener("click", () => State.getCurrentState().displayPattern = createNewPatternFromInputs());
 
 	// hook up handlers for buttons to write and read a pattern
 	let button_savePattern = document.getElementById(names.button_savePattern)
