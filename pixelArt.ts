@@ -1,5 +1,5 @@
 // Imports:
-import { writeDebug } from './modules/debug.js';
+import { writeDebug, write } from './modules/debug.js';
 
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
@@ -13,45 +13,6 @@ TODO:
   * pull out code referencing the page?
   * read about JS/TS file organization?
   * MVC? By region?
-- export to PDF
-  * need to have representation of pattern; do this after refactor?
-  * write the table to pdf
-  * save the file as another file type?
-  * way to make different file type openable, or will use app?
-- move apply and set brush functions to the program state?
-- check defaults in initialization?
-- learn about modules
-- in assertions, give warnings when called unnecessarily? (e.g. if the type of arg passed to isNum is already a number)
-- check defaults
-  * way to know if I've checked everything? make defaults enumerable? flag that verified?
-- documentation for NaN : number?
-
-Questions:
-
-- when getting info from html element, cast
-- best ways to link model and view? events fire when a thing is changed? pattern to follow?
-  * updating cell should update model automatically
-  * function to initialize and another to handle updates?
-- best way to interface between js, css, and html? how to store class names, ids, etc
-- bad to have a different style for each cell?
-- how to open the page from VS Code?
-- when styles added to an HTML element here, are they put in the html, or a css file? (I think the former?)
-- using conditions/assertions the way I am is silly because trying to access properties of a null object will cause the same error already?
-  * not necessarily the case when passing and manipulating strings; some unintended values may get through?
-  * correction: silent failure without checks
-- what to do about redundant assertion checks?
-  * restrict to pre- and post-conditions?
-- I don't want anything to be allowed to be undefined (e.g. if I try to set a style defaults.background, I want to be notified that this is undefined)
-- why is it necessary to rename exports?
-- should file type in import path be js or ts?
-- lost debugging ability b/c modules?
-
-
-Notes:
-
-- need assignment of brush to update UI elements
-- bug: if key down when page refreshed, then swapping modes will be offset; need to refresh everything again?
-- bug: keeps firing events when button held? (keyup and keydown)
 
 */
 
@@ -66,10 +27,7 @@ export function getCurrentState()
 	return currentState;
 }
 
-// Sets the displayed pattern field to a new pattern object according to the input dimensions on the page
-// NEXT: what to do about this? call outside of creating new state? pass it in?
-//  * used as: handler for new pattern button
-//  * in the past as initialization of state pattern
+// Constructs a new pattern object according to the input dimensions on the page
 export function createNewPattern() : Pattern
 {
 	// Get elements containing dimension inputs and assign to input element type
@@ -151,14 +109,6 @@ export function setBrush(brush : string)
 	assertion.isNotUndefined(currentBrush);
 
 	currentBrush.style.background = brush;
-}
-
-
-// Note: used for testing
-export function write(thingToWrite : string)
-{
-	let dumpElement = document.getElementById("dump");
-	dumpElement.textContent += "\n" + thingToWrite;
 }
 
 

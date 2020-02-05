@@ -15,3 +15,10 @@ function writeDebug(debugObject = {}, debugMessage = "(no message provided)")
 		`);
 	}
 }
+
+// Note: used for testing
+export function write(thingToWrite : string)
+{
+	let dumpElement = document.getElementById("dump");
+	dumpElement.textContent += "\n" + thingToWrite;
+}
