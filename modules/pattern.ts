@@ -3,8 +3,6 @@ import { writeDebug } from './debug.js';
 import { assertion } from './assertion.js';
 import { names, defaults } from './application-constants.js';
 
-export { Pattern };
-
 // -*-*-*-*-*-*-*-*-*-
 // Model
 // -*-*-*-*-*-*-*-*-*-
@@ -13,7 +11,7 @@ export { Pattern };
 // Pattern data
 // -------
 
-class Pattern
+export class Pattern
 {
 	cells : string[][];
 	onCellClick : (e : Event) => void

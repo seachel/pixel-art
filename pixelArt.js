@@ -1,5 +1,5 @@
 // Imports:
-import { writeDebug, write } from './modules/debug.js';
+import { writeDebug, writeToPage } from './modules/debug.js';
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
 import { Pattern } from './modules/pattern.js';
@@ -104,7 +104,7 @@ export function swapMatchMode() {
 function onKeyDown_doc(e) {
     // First block below is for bug causing firing during IME composition; update: nope?
     if (e.isComposing || e.keyCode === 229) {
-        write("is composing.");
+        writeToPage("is composing.");
         return;
     }
     // see keycode.info for more
@@ -116,7 +116,7 @@ function onKeyDown_doc(e) {
 function onKeyUp_doc(e) {
     // First block below is for bug causing firing during IME composition; update: nope?
     if (e.isComposing || e.keyCode === 229) {
-        write("is composing.");
+        writeToPage("is composing.");
         return;
     }
     // see keycode.info for more

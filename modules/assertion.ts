@@ -1,11 +1,9 @@
 import { names, defaults } from './application-constants.js';
 
-export { assertion };
-
 // Use the assertions below to create pre-conditions, post-conditions, or any other assertions where breaking execution is the preferred behaviour when not true
 // How to know when to use: consider it whenever creating a new variable
 // use isNum check on string before using `Number` function to get more information
-const assertion =
+export const assertion =
 {
 	isEqual: (checkVal1, checkVal2) =>
 	{

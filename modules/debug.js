@@ -1,6 +1,5 @@
-export { writeDebug };
 const isDebug = true;
-function writeDebug(debugObject = {}, debugMessage = "(no message provided)") {
+export function writeDebug(debugObject = {}, debugMessage = "(no message provided)") {
     if (isDebug) {
         console.log(`***
 		Debug note:
@@ -12,7 +11,8 @@ function writeDebug(debugObject = {}, debugMessage = "(no message provided)") {
     }
 }
 // Note: used for testing
-export function write(thingToWrite) {
+export function writeToPage(thingToWrite) {
+    // TODO: if not already on the page, add it
     let dumpElement = document.getElementById("dump");
     dumpElement.textContent += "\n" + thingToWrite;
 }

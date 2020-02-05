@@ -1,5 +1,5 @@
 // Imports:
-import { writeDebug, write } from './modules/debug.js';
+import { writeDebug, writeToPage } from './modules/debug.js';
 
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
@@ -161,7 +161,7 @@ function onKeyDown_doc(e : KeyboardEvent)
 	// First block below is for bug causing firing during IME composition; update: nope?
 	if (e.isComposing || e.keyCode === 229)
 	{
-		write("is composing.");
+		writeToPage("is composing.");
 		return;
 	}
 
@@ -178,7 +178,7 @@ function onKeyUp_doc(e : KeyboardEvent)
 	// First block below is for bug causing firing during IME composition; update: nope?
 	if (e.isComposing || e.keyCode === 229)
 	{
-		write("is composing.");
+		writeToPage("is composing.");
 		return;
 	}
 

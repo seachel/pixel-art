@@ -1,9 +1,8 @@
 import { defaults } from './application-constants.js';
-export { ProgramState };
 // -------
 // Program state
 // -------
-class ProgramState {
+export class ProgramState {
     constructor(createPatternCallback) {
         // set the default value for whether or not we are in match mode for setting the brush
         this.isMatchSelection = false;
