@@ -6,12 +6,15 @@ import { assertion } from './modules/assertion.js';
 import { Pattern } from './modules/pattern.js';
 import * as State from './modules/program-state.js';
 
+import * as Core from './modules/functional-core.js';
+
 /*
 TODO:
 - Organize!
   * pull out code referencing the page?
   * read about JS/TS file organization?
   * MVC? By region?
+  * verification in the core functions?
 
 */
 
@@ -33,32 +36,11 @@ function createNewPatternFromInputs() : Pattern
 	let patternHeight : number = Number(patternHeightInput);
 	let patternWidth : number = Number(patternWidthInput);
 
-	return createNewPattern(patternHeight, patternWidth);
-}
-
-function createNewPattern(patternHeight : number, patternWidth : number) : Pattern
-{
-	return new Pattern(patternHeight, patternWidth, inject_pattern_onCellClick);
+	return Core.createNewPattern(patternHeight, patternWidth, onCellClick);
 }
 
 
-// TODO: this function below is passed to the pattern class
-// TODO: other way to organize? this function needs to access the current state
-// Q: put in module parametrized by program state? makes sense for any other injections?
-// Function to apply the brush to the passed event's target
-function inject_pattern_onCellClick(e : Event)
-{
-	var targetElement = <HTMLElement>e.target;
 
-	if (State.getCurrentState().isMatchSelection)
-	{
-		setBrush(targetElement.style.background);
-	}
-	else
-	{
-		applyBrush(targetElement, State.getCurrentState().brush);
-	}
-}
 
 
 
@@ -148,7 +130,30 @@ function swapMatchMode()
 
 
 
+
+// Function to fire when a cell is clicked.
+// If match mode is on, set the brush to the target element (i.e. a clicked cell's brush)
+// If match mode is off, apply the constructed brush to the passed event's target (i.e. a cell)
+// needs to access: State
+function onCellClick(e : Event) : void
+{
+	// TODO: verify that the argument is an HTMLElement
+	var targetElement = <HTMLElement>e.target;
+
+	if (State.getCurrentState().isMatchSelection)
+	{
+		setBrush(targetElement.style.background);
+	}
+	else
+	{
+		applyBrush(targetElement, State.getCurrentState().brush);
+	}
+}
+
 // if match selection mode is on, then don't colour selected square but instead set the brush to its colour
+// Needs to access:
+// * current state
+// * swapMatchMode
 function onKeyDown_doc(e : KeyboardEvent)
 {
 	// First block below is for bug causing firing during IME composition; update: nope?
@@ -166,6 +171,10 @@ function onKeyDown_doc(e : KeyboardEvent)
 	}
 }
 
+// if match selection mode is on, then don't colour selected square but instead set the brush to its colour
+// Needs to access:
+// * current state
+// * swapMatchMode
 function onKeyUp_doc(e : KeyboardEvent)
 {
 	// First block below is for bug causing firing during IME composition; update: nope?
