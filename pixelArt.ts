@@ -4,7 +4,7 @@ import { writeDebug, writeToPage } from './modules/debug.js';
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
 import { Pattern } from './modules/pattern.js';
-import { ProgramState } from './modules/program-state.js';
+import * as AppState from './modules/program-state.js';
 
 
 /*
@@ -16,19 +16,8 @@ TODO:
 
 */
 
-
-var currentState : ProgramState;
-export function createState()
-{
-	currentState = new ProgramState(createNewPattern);
-}
-export function getCurrentState()
-{
-	return currentState;
-}
-
 // Constructs a new pattern object according to the input dimensions on the page
-export function createNewPattern() : Pattern
+function createNewPatternFromInputs() : Pattern
 {
 	// Get elements containing dimension inputs and assign to input element type
 	let patternHeightInputElement = <HTMLInputElement> document.getElementById(names.patternHeight);
@@ -45,6 +34,11 @@ export function createNewPattern() : Pattern
 	let patternHeight : number = Number(patternHeightInput);
 	let patternWidth : number = Number(patternWidthInput);
 
+	return createNewPattern(patternHeight, patternWidth);
+}
+
+function createNewPattern(patternHeight : number, patternWidth : number) : Pattern
+{
 	return new Pattern(patternHeight, patternWidth, inject_pattern_onCellClick);
 }
 
@@ -53,24 +47,24 @@ export function createNewPattern() : Pattern
 // TODO: other way to organize? this function needs to access the current state
 // Q: put in module parametrized by program state? makes sense for any other injections?
 // Function to apply the brush to the passed event's target
-export function inject_pattern_onCellClick(e : Event)
+function inject_pattern_onCellClick(e : Event)
 {
 	var targetElement = <HTMLElement>e.target;
 
-	if (currentState.isMatchSelection)
+	if (AppState.getProgramState().isMatchSelection)
 	{
 		setBrush(targetElement.style.background);
 	}
 	else
 	{
-		applyBrush(targetElement, currentState.brush);
+		applyBrush(targetElement, AppState.getProgramState().brush);
 	}
 }
 
 
 
 // applies the current brush to the passed cell element and its corresponding element in the data grid
-export function applyBrush(cell : HTMLElement, brush : string)
+function applyBrush(cell : HTMLElement, brush : string)
 {
 	cell.style.background = brush;
 
@@ -91,17 +85,17 @@ export function applyBrush(cell : HTMLElement, brush : string)
 	let columnIndex = Number(matches[2]);
 
 	// set the brush of the corresponding cell in the model to current brush
-	currentState.displayPattern.cells[rowIndex][columnIndex] = currentState.brush;
+	AppState.getProgramState().displayPattern.cells[rowIndex][columnIndex] = AppState.getProgramState().brush;
 
 	// Checking for debugging:
-	writeDebug(currentState.displayPattern.cells, "Pattern model after update:");
+	writeDebug(AppState.getProgramState().displayPattern.cells, "Pattern model after update:");
 }
 
-export function setBrush(brush : string)
+function setBrush(brush : string)
 {
 	// TODO: checks on brush? is a valid background colour? this will change as the meaning of brush changes
 
-	currentState.brush = brush;
+	AppState.getProgramState().brush = brush;
 
 	let currentBrush = document.getElementById(names.currentBrush);
 
@@ -114,14 +108,14 @@ export function setBrush(brush : string)
 
 // Below are functions to update the page - should be in a model? encapsulate?
 
-export function writePattern()
+function writePattern()
 {
-	let fileString = JSON.stringify(getCurrentState().displayPattern);
+	let fileString = JSON.stringify(AppState.getProgramState().displayPattern);
 
 	window.localStorage.setItem("saved pattern", fileString);
 }
 
-export function readPattern()
+function readPattern()
 {
 	let fileString = window.localStorage.getItem("saved pattern");
 
@@ -129,25 +123,25 @@ export function readPattern()
 	// TODO: check that parsed JSON has the desired fields?
 
 	// TODO: it's possible to update the display pattern here, but it doesn't update the field on currentState and doesn't cause any persistent update to the model; need function to update it, and make the field private? then this function should be outside?
-	getCurrentState().displayPattern = JSON.parse(fileString);
+	AppState.getProgramState().displayPattern = JSON.parse(fileString);
 }
 
 
-export function swapMatchMode()
+function swapMatchMode()
 {
 	let brushControl = document.getElementById(names.isMatchBrush);
 
-	if (getCurrentState().isMatchSelection)
+	if (AppState.getProgramState().isMatchSelection)
 	{
 		// turn it off and change UI as necessary
-		getCurrentState().isMatchSelection = false;
+		AppState.getProgramState().isMatchSelection = false;
 
 		brushControl.style.background = defaults.cellColour;
 	}
 	else
 	{
 		// turn it on and change UI as necessary
-		getCurrentState().isMatchSelection = true;
+		AppState.getProgramState().isMatchSelection = true;
 
 		brushControl.style.background = "yellow";
 	}
@@ -167,7 +161,7 @@ function onKeyDown_doc(e : KeyboardEvent)
 
 	// see keycode.info for more
 	// if correct key pressed and match selection is off, turn on
-	if (e.keyCode === 83 && !getCurrentState().isMatchSelection)
+	if (e.keyCode === 83 && !AppState.getProgramState().isMatchSelection)
 	{
 		swapMatchMode();
 	}
@@ -184,7 +178,7 @@ function onKeyUp_doc(e : KeyboardEvent)
 
 	// see keycode.info for more
 	// if correct key released and match selection is on, turn off
-	if (e.keyCode === 83 && getCurrentState().isMatchSelection)
+	if (e.keyCode === 83 && AppState.getProgramState().isMatchSelection)
 	{
 		swapMatchMode();
 	}
@@ -232,7 +226,7 @@ function makeCurrentPurple() {
 	currentBrushElement.style.background = defaults.cellColour;
 
 	// create state object
-	createState();
+	AppState.setProgramState(new AppState.ProgramState(createNewPatternFromInputs));
 
 
 	// hook up handlers for key events
@@ -244,7 +238,7 @@ function makeCurrentPurple() {
 
 	// hook up handler for the button to create a new pattern
 	let button_makePattern = document.getElementById(names.button_createPattern);
-	button_makePattern.addEventListener("click", () => currentState.displayPattern = createNewPattern());
+	button_makePattern.addEventListener("click", () => AppState.getProgramState().displayPattern = createNewPatternFromInputs());
 
 	// hook up handlers for buttons to write and read a pattern
 	let button_savePattern = document.getElementById(names.button_savePattern)

@@ -8,6 +8,18 @@ import { assertion } from './assertion.js';
 // Program state
 // -------
 
+// encapsulating the current state of the program in a local variable
+// accessor functions allow external modules to have controlled access to read and write to this value
+var currentState : ProgramState;
+export function setProgramState(newState : ProgramState) : void
+{
+	currentState = newState;
+}
+export function getProgramState() : ProgramState
+{
+	return currentState;
+}
+
 export class ProgramState
 {
 	private _displayPattern : Pattern;
