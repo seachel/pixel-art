@@ -8,6 +8,7 @@ export const assertion = {
             throwIt(`${checkVal1} != ${checkVal2}.`);
         }
     },
+    // TODO: better arg type? union?
     isNum: (checkVal) => {
         if (isNaN(Number(checkVal))) {
             throwIt(`${checkVal} is not a number.`);

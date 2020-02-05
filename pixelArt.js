@@ -4,6 +4,7 @@ import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
 import * as State from './modules/program-state.js';
 import * as Core from './modules/functional-core.js';
+import * as Utilities from './modules/utilities.js';
 /*
 TODO:
 - Organize!
@@ -11,6 +12,9 @@ TODO:
   * read about JS/TS file organization?
   * MVC? By region?
   * verification in the core functions?
+  * separate function to do verifications and casting to number?
+  * more use of generics, esp in assertion class
+  * more concise accessors for state? control access to pattern and contained fields within program-state module
 
 */
 // Constructs a new pattern object according to the input dimensions on the page
@@ -21,30 +25,17 @@ function createNewPatternFromInputs() {
     // Get input values as strings
     let patternHeightInput = patternHeightInputElement.value;
     let patternWidthInput = patternWidthInputElement.value;
-    // Check that pattern dimension values are numbers
-    assertion.isNum(patternHeightInput);
-    assertion.isNum(patternWidthInput);
-    let patternHeight = Number(patternHeightInput);
-    let patternWidth = Number(patternWidthInput);
+    //
+    let patternHeight = Utilities.verifyAndCastToNumber(patternHeightInput);
+    let patternWidth = Utilities.verifyAndCastToNumber(patternWidthInput);
     return Core.createNewPattern(patternHeight, patternWidth, onCellClick);
 }
 // applies the current brush to the passed cell element and its corresponding element in the data grid
 function applyBrush(cell, brush) {
     cell.style.background = brush;
-    // regular expression to match the coordinates from a cell id
-    let matchExpression = /row(\d+)-col(\d+)/g;
-    let matches = matchExpression.exec(cell.id);
-    // assert that matches got an array of three elements
-    // the first is the full string match, second and third are coordinates
-    assertion.hasLength(matches, 3);
-    // assert that the second and third matches are numbers
-    assertion.isNum(matches[1]);
-    assertion.isNum(matches[2]);
-    // extract the grid coordinates from the match above
-    let rowIndex = Number(matches[1]);
-    let columnIndex = Number(matches[2]);
+    var indices = Core.getIndicesFromID(cell.id);
     // set the brush of the corresponding cell in the model to current brush
-    State.getCurrentState().displayPattern.cells[rowIndex][columnIndex] = State.getCurrentState().brush;
+    State.getCurrentState().displayPattern.cells[indices.row][indices.column] = State.getCurrentState().brush;
     // Checking for debugging:
     writeDebug(State.getCurrentState().displayPattern.cells, "Pattern model after update:");
 }
