@@ -4,11 +4,12 @@ export { ProgramState };
 // Program state
 // -------
 class ProgramState {
-    constructor() {
+    constructor(createPatternCallback) {
         // set the default value for whether or not we are in match mode for setting the brush
         this.isMatchSelection = false;
         // set the current brush to the default cell colour
         this.brush = defaults.cellColour;
+        this.displayPattern = createPatternCallback();
     }
     get displayPattern() {
         return this._displayPattern;
