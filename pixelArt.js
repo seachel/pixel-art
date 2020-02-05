@@ -5,20 +5,6 @@ import { assertion } from './modules/assertion.js';
 import * as State from './modules/program-state.js';
 import * as Core from './modules/functional-core.js';
 import * as Utilities from './modules/utilities.js';
-/*
-TODO:
-- Organize!
-  * pull out code referencing the page?
-  * read about JS/TS file organization?
-  * MVC? By region?
-  * verification in the core functions?
-  * separate function to do verifications and casting to number?
-  * more use of generics, esp in assertion class
-  * more concise accessors for state? control access to pattern and contained fields within program-state module
-  * jQuery useful here?
-  * remove assertions from top level?
-
-*/
 // Constructs a new pattern object according to the input dimensions on the page
 function createNewPatternFromInputs() {
     // Get elements containing dimension inputs and assign to input element type
