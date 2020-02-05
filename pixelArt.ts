@@ -19,6 +19,8 @@ TODO:
   * separate function to do verifications and casting to number?
   * more use of generics, esp in assertion class
   * more concise accessors for state? control access to pattern and contained fields within program-state module
+  * jQuery useful here?
+  * remove assertions from top level?
 
 */
 
@@ -70,16 +72,16 @@ function setBrush(brush : string)
 	currentBrush.style.background = brush;
 }
 
-
-// Below are functions to update the page - should be in a model? encapsulate?
-
-function writePattern()
+// Saves the pattern to local storage
+// TODO: separate function in core later to build item to save
+function savePattern()
 {
 	let fileString = JSON.stringify(State.getCurrentState().displayPattern);
 
 	window.localStorage.setItem("saved pattern", fileString);
 }
 
+// Reads the pattern from local storage
 function readPattern()
 {
 	let fileString = window.localStorage.getItem("saved pattern");
@@ -113,7 +115,7 @@ function swapMatchMode()
 }
 
 
-
+//#region Event handlers
 
 // Function to fire when a cell is clicked.
 // If match mode is on, set the brush to the target element (i.e. a clicked cell's brush)
@@ -176,6 +178,8 @@ function onKeyUp_doc(e : KeyboardEvent)
 	}
 }
 
+//#endregion
+
 
 // Temp: hook handlers to pallet items
 function makeCurrentBlue() {
@@ -234,7 +238,7 @@ function makeCurrentPurple() {
 
 	// hook up handlers for buttons to write and read a pattern
 	let button_savePattern = document.getElementById(names.button_savePattern)
-	button_savePattern.addEventListener("click", writePattern);
+	button_savePattern.addEventListener("click", savePattern);
 
 	let button_loadPattern = document.getElementById(names.button_loadPattern)
 	button_loadPattern.addEventListener("click", readPattern);
