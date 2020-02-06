@@ -47,7 +47,7 @@ function readPattern() {
     // TODO: check that valid JSON?
     // TODO: check that parsed JSON has the desired fields?
     // TODO: it's possible to update the display pattern here, but it doesn't update the field on currentState and doesn't cause any persistent update to the model; need function to update it, and make the field private? then this function should be outside?
-    // NOTE: need to verify the structure of the parsed string, and make a new pattern? use createnewpattern?
+    // NOTE: need to verify the structure of the parsed string, and make a new pattern? use createNewPattern?
     var loadedPattern = JSON.parse(fileString);
     writeDebug(loadedPattern, "Loaded pattern:");
     State.getCurrentState().displayPattern = JSON.parse(fileString);

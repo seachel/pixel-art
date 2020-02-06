@@ -54,12 +54,17 @@ export class Pattern {
             return 0;
         }
     }
-    // TODO: update function with functions to write html elements
+    // Returns html for a pattern object
+    // The pattern is an HTML table with each td having an id defined by a function in the application constants
     getPatternHTML(height, width) {
         // get element where the pattern will be written
         // build the text for that element
         let patternHTML = `<table id="${names.patternGrid}">
 		`;
+        // For each row, up to `height`,
+        //   start a `tr` tag
+        //   for each column,
+        //     start a td tag with appropriate id and class, both defined in application constants
         for (let i = 0; i < height; i++) {
             patternHTML += `<tr>
 			`;
