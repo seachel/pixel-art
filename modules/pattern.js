@@ -6,21 +6,53 @@ import { names, defaults } from './application-constants.js';
 // -------
 // Pattern data
 // -------
+export function makePatternFromDimensions(height, width, onCellClick) {
+    let pattern = new Pattern(onCellClick);
+    pattern.initializePatternFromDimensions(height, width);
+    return pattern;
+}
+export function makePatternFromCells(cells, onCellClick) {
+    let pattern = new Pattern(onCellClick);
+    pattern.InitializePatternFromCells(cells);
+    return pattern;
+}
 export class Pattern {
-    constructor(height, width, onCellClick) {
+    constructor(onCellClick) {
+        this.onCellClick = onCellClick;
+    }
+    // Note:
+    // - pattern init from dimensions or cells
+    initializePatternFromDimensions(height, width) {
         // TODO: Check that inputs are valid numbers, not NaN
         assertion.isNonNegative(height);
         assertion.isNonNegative(width);
         // TODO: this should be front-end validation rather than breaking?
-        // provide the passed handler to use when a cell is clicked
-        this.onCellClick = onCellClick;
-        // write pattern HTML
-        let patternContainer = document.getElementById(names.region_pattern);
-        patternContainer.innerHTML = this.getPatternHTML(height, width);
-        // initialize the HTML elements corresponding to cells in the grid representing the pattern
-        this.initializeCellViews();
         // set the cells of the object to defaults
-        this.cells = this.initializeCells(height, width);
+        this.cells = this.getDefaultCells(height, width);
+        // initialize the HTML elements corresponding to cells in the grid representing the pattern
+        this.initializePatternView(height, width);
+    }
+    InitializePatternFromCells(cells) {
+        this.cells = cells;
+        this.initializePatternView(this.getPatternHeight(), this.getPatternWidth());
+        // write HTML for pattern and assign brush?
+    }
+    getPatternHeight() {
+        // TODO: verification that number can be returned
+        if (this.cells && this.cells.length) {
+            return this.cells.length;
+        }
+        else {
+            return 0;
+        }
+    }
+    getPatternWidth() {
+        if (this.cells && this.cells.length > 0) {
+            return this.cells[0].length;
+        }
+        else {
+            return 0;
+        }
     }
     // TODO: update function with functions to write html elements
     getPatternHTML(height, width) {
@@ -45,7 +77,8 @@ export class Pattern {
 		`;
         return patternHTML;
     }
-    initializeCells(height, width) {
+    // Returns a grid of brushes (strings for now) with the default brush assigned
+    getDefaultCells(height, width) {
         // cells is column of rows, so
         //   outer loop goes along/down the column
         //   the inner loop goes across each row
@@ -59,7 +92,11 @@ export class Pattern {
         }
         return cells;
     }
-    initializeCellViews() {
+    // TODO: when? need the HTML to already be written
+    initializePatternView(height, width) {
+        // write pattern HTML
+        let patternContainer = document.getElementById(names.region_pattern);
+        patternContainer.innerHTML = this.getPatternHTML(height, width);
         // Add event listener to cells
         const viewCells = document.getElementsByClassName(names.patternCellName);
         for (var i = 0; i < viewCells.length; i++) {

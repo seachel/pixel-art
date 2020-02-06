@@ -5,12 +5,11 @@ export function writeDebug(debugObject = {}, debugMessage = "(no message provide
 	if (isDebug)
 	{
 		console.log(`***
-		Debug note:
-		${debugMessage}
-		---
-		${debugObject}
-		***
-		`);
+${debugMessage}
+---
+${debugObject}
+***
+`);
 	}
 }
 

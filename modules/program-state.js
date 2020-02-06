@@ -23,7 +23,6 @@ export class ProgramState {
         return this._displayPattern;
     }
     set displayPattern(value) {
-        // TODO: update view
         this._displayPattern = value;
     }
 }
