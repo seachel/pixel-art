@@ -11,6 +11,7 @@ import { names, defaults } from './application-constants.js';
 // Pattern data
 // -------
 
+/// A function to make a pattern given the height and width of the grid
 export function makePatternFromDimensions(height : number, width : number, onCellClick : (e : Event) => void) : Pattern
 {
 	let pattern = new Pattern(onCellClick);
@@ -20,6 +21,8 @@ export function makePatternFromDimensions(height : number, width : number, onCel
 	return pattern;
 }
 
+/// A function to make a pattern given the cells
+// TODO: what to do when there are more fields in the pattern? something to read the pattern and pass that object in? Given a pattern, update the state and view?
 export function makePatternFromCells(cells : string[][], onCellClick : (e : Event) => void) : Pattern
 {
 	let pattern = new Pattern(onCellClick);
@@ -60,8 +63,6 @@ export class Pattern
 		this.cells = cells;
 
 		this.initializePatternView(this.getPatternHeight(), this.getPatternWidth());
-
-		// write HTML for pattern and assign brush?
 	}
 
 	private getPatternHeight() : number
@@ -149,25 +150,26 @@ export class Pattern
 		return cells;
 	}
 
-	// TODO: when? need the HTML to already be written
+	// This function hooks up the click events and sets the style of the brush on cells
+	// Note: this must be called after the HTML for the pattern is on the page and the cells field of the pattern is set
 	private initializePatternView(height : number, width : number)
 	{
 		// write pattern HTML
 		let patternContainer = document.getElementById(names.region_pattern)
 		patternContainer.innerHTML = this.getPatternHTML(height, width);
 
-		// Add event listener to cells
-		const viewCells = document.getElementsByClassName(names.patternCellName);
-
-		for (var i = 0; i < viewCells.length; i++)
+		for (let rowIndex = 0; rowIndex < height; rowIndex++)
 		{
-			let currentCell : HTMLElement = <HTMLElement> viewCells[i];
+			for (let colIndex = 0; colIndex < width; colIndex++)
+			{
+				let currentCell : HTMLElement = document.getElementById(defaults.cellId(rowIndex, colIndex));
 
-			// hook up click event
-			currentCell.addEventListener("click", this.onCellClick, false);
+				// TODO: hook up click event somewhere better? reserve this function for setting the brush?
+				// hook up click event
+				currentCell.addEventListener("click", this.onCellClick, false);
 
-			// style background with default
-			currentCell.style.background = defaults.cellColour;
+				currentCell.style.background = this.cells[rowIndex][colIndex]
+			}
 		}
 	}
 }

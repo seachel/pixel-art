@@ -6,11 +6,14 @@ import { names, defaults } from './application-constants.js';
 // -------
 // Pattern data
 // -------
+/// A function to make a pattern given the height and width of the grid
 export function makePatternFromDimensions(height, width, onCellClick) {
     let pattern = new Pattern(onCellClick);
     pattern.initializePatternFromDimensions(height, width);
     return pattern;
 }
+/// A function to make a pattern given the cells
+// TODO: what to do when there are more fields in the pattern? something to read the pattern and pass that object in? Given a pattern, update the state and view?
 export function makePatternFromCells(cells, onCellClick) {
     let pattern = new Pattern(onCellClick);
     pattern.InitializePatternFromCells(cells);
@@ -35,7 +38,6 @@ export class Pattern {
     InitializePatternFromCells(cells) {
         this.cells = cells;
         this.initializePatternView(this.getPatternHeight(), this.getPatternWidth());
-        // write HTML for pattern and assign brush?
     }
     getPatternHeight() {
         // TODO: verification that number can be returned
@@ -97,19 +99,20 @@ export class Pattern {
         }
         return cells;
     }
-    // TODO: when? need the HTML to already be written
+    // This function hooks up the click events and sets the style of the brush on cells
+    // Note: this must be called after the HTML for the pattern is on the page and the cells field of the pattern is set
     initializePatternView(height, width) {
         // write pattern HTML
         let patternContainer = document.getElementById(names.region_pattern);
         patternContainer.innerHTML = this.getPatternHTML(height, width);
-        // Add event listener to cells
-        const viewCells = document.getElementsByClassName(names.patternCellName);
-        for (var i = 0; i < viewCells.length; i++) {
-            let currentCell = viewCells[i];
-            // hook up click event
-            currentCell.addEventListener("click", this.onCellClick, false);
-            // style background with default
-            currentCell.style.background = defaults.cellColour;
+        for (let rowIndex = 0; rowIndex < height; rowIndex++) {
+            for (let colIndex = 0; colIndex < width; colIndex++) {
+                let currentCell = document.getElementById(defaults.cellId(rowIndex, colIndex));
+                // TODO: hook up click event somewhere better? reserve this function for setting the brush?
+                // hook up click event
+                currentCell.addEventListener("click", this.onCellClick, false);
+                currentCell.style.background = this.cells[rowIndex][colIndex];
+            }
         }
     }
 }
