@@ -30,6 +30,8 @@ export class ProgramState
 	set displayPattern(value : Pattern)
 	{
 		this._displayPattern = value;
+
+		// TODO: create new
 	}
 
 	isMatchSelection : Boolean;

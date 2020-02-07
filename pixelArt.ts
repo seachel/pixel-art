@@ -3,7 +3,7 @@ import { writeDebug, writeToPage } from './modules/debug.js';
 
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
-import { Pattern } from './modules/pattern.js';
+import { Pattern, makePatternFromDimensions, makePatternFromCells } from './modules/pattern.js';
 import * as State from './modules/program-state.js';
 
 import * as Core from './modules/functional-core.js';
@@ -68,7 +68,7 @@ function savePattern()
 }
 
 // Reads the pattern from local storage
-function readPattern()
+function loadPattern()
 {
 	let fileString = window.localStorage.getItem("saved pattern");
 
@@ -82,7 +82,13 @@ function readPattern()
 
 	writeDebug(loadedPattern, "Loaded pattern:");
 
-	State.getCurrentState().displayPattern = JSON.parse(fileString);
+	// TODO: create new pattern from passed?
+	// TODO: parse loaded pattern and verify that it has a cells field
+	// TODO: bad; find better way to make new pattern, parsing in saved string
+	var newCells = loadedPattern["cells"];
+
+	// TODO: still doesn't update the view
+	State.getCurrentState().displayPattern = makePatternFromCells(newCells, onCellClick);
 }
 
 
@@ -233,5 +239,5 @@ function makeCurrentPurple() {
 	button_savePattern.addEventListener("click", savePattern);
 
 	let button_loadPattern = document.getElementById(names.button_loadPattern)
-	button_loadPattern.addEventListener("click", readPattern);
+	button_loadPattern.addEventListener("click", loadPattern);
 })();

@@ -24,5 +24,6 @@ export class ProgramState {
     }
     set displayPattern(value) {
         this._displayPattern = value;
+        // TODO: create new
     }
 }

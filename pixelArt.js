@@ -2,6 +2,7 @@
 import { writeDebug, writeToPage } from './modules/debug.js';
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
+import { makePatternFromCells } from './modules/pattern.js';
 import * as State from './modules/program-state.js';
 import * as Core from './modules/functional-core.js';
 import * as Utilities from './modules/utilities.js';
@@ -42,7 +43,7 @@ function savePattern() {
     window.localStorage.setItem("saved pattern", fileString);
 }
 // Reads the pattern from local storage
-function readPattern() {
+function loadPattern() {
     let fileString = window.localStorage.getItem("saved pattern");
     // TODO: check that valid JSON?
     // TODO: check that parsed JSON has the desired fields?
@@ -50,7 +51,12 @@ function readPattern() {
     // NOTE: need to verify the structure of the parsed string, and make a new pattern? use createNewPattern?
     var loadedPattern = JSON.parse(fileString);
     writeDebug(loadedPattern, "Loaded pattern:");
-    State.getCurrentState().displayPattern = JSON.parse(fileString);
+    // TODO: create new pattern from passed?
+    // TODO: parse loaded pattern and verify that it has a cells field
+    // TODO: bad; find better way to make new pattern, parsing in saved string
+    var newCells = loadedPattern["cells"];
+    // TODO: still doesn't update the view
+    State.getCurrentState().displayPattern = makePatternFromCells(newCells, onCellClick);
 }
 function swapMatchMode() {
     let brushControl = document.getElementById(names.isMatchBrush);
@@ -156,5 +162,5 @@ function makeCurrentPurple() {
     let button_savePattern = document.getElementById(names.button_savePattern);
     button_savePattern.addEventListener("click", savePattern);
     let button_loadPattern = document.getElementById(names.button_loadPattern);
-    button_loadPattern.addEventListener("click", readPattern);
+    button_loadPattern.addEventListener("click", loadPattern);
 })();
