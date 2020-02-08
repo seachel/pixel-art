@@ -3,7 +3,7 @@ import { writeDebug, writeToPage } from './modules/debug.js';
 
 import { names, defaults } from './modules/application-constants.js';
 import { assertion } from './modules/assertion.js';
-import { Pattern, makePatternFromDimensions, makePatternFromCells } from './modules/pattern.js';
+import { Pattern } from './modules/pattern.js';
 import * as State from './modules/program-state.js';
 
 import * as Core from './modules/functional-core.js';
@@ -88,7 +88,7 @@ function loadPattern()
 	var newCells = loadedPattern["cells"];
 
 	// TODO: still doesn't update the view
-	State.getCurrentState().displayPattern = makePatternFromCells(newCells, onCellClick);
+	State.getCurrentState().displayPattern = Pattern.makePatternFromCells(newCells, onCellClick);
 }
 
 

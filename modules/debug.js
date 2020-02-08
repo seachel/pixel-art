@@ -4,7 +4,7 @@ export function writeDebug(debugObject = {}, debugMessage = "(no message provide
         console.log(`***
 ${debugMessage}
 ---
-${JSON.stringify(debugObject)}
+${debugObject.toString()}
 ***
 `);
     }

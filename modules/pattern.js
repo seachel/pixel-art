@@ -6,22 +6,22 @@ import { names, defaults } from './application-constants.js';
 // -------
 // Pattern data
 // -------
-/// A function to make a pattern given the height and width of the grid
-export function makePatternFromDimensions(height, width, onCellClick) {
-    let pattern = new Pattern(onCellClick);
-    pattern.initializePatternFromDimensions(height, width);
-    return pattern;
-}
-/// A function to make a pattern given the cells
-// TODO: what to do when there are more fields in the pattern? something to read the pattern and pass that object in? Given a pattern, update the state and view?
-export function makePatternFromCells(cells, onCellClick) {
-    let pattern = new Pattern(onCellClick);
-    pattern.InitializePatternFromCells(cells);
-    return pattern;
-}
 export class Pattern {
     constructor(onCellClick) {
         this.onCellClick = onCellClick;
+    }
+    /// A function to make a pattern given the cells
+    // TODO: what to do when there are more fields in the pattern? something to read the pattern and pass that object in? Given a pattern, update the state and view?
+    static makePatternFromCells(cells, onCellClick) {
+        let pattern = new Pattern(onCellClick);
+        pattern.initializePatternFromCells(cells);
+        return pattern;
+    }
+    /// A function to make a pattern given the height and width of the grid
+    static makePatternFromDimensions(height, width, onCellClick) {
+        let pattern = new Pattern(onCellClick);
+        pattern.initializePatternFromDimensions(height, width);
+        return pattern;
     }
     // Note:
     // - pattern init from dimensions or cells
@@ -35,7 +35,7 @@ export class Pattern {
         // initialize the HTML elements corresponding to cells in the grid representing the pattern
         this.initializePatternView(height, width);
     }
-    InitializePatternFromCells(cells) {
+    initializePatternFromCells(cells) {
         this.cells = cells;
         this.initializePatternView(this.getPatternHeight(), this.getPatternWidth());
     }

@@ -1,11 +1,11 @@
 import { assertion } from './assertion.js';
-import { makePatternFromDimensions, makePatternFromCells } from './pattern.js';
+import { Pattern } from './pattern.js';
 // Core functions from the top-level module appropriate to use when writing tests
 export function createNewPattern(patternHeight, patternWidth, onCellClick) {
-    return makePatternFromDimensions(patternHeight, patternWidth, onCellClick);
+    return Pattern.makePatternFromDimensions(patternHeight, patternWidth, onCellClick);
 }
 export function loadPattern(cells, onCellClick) {
-    return makePatternFromCells(cells, onCellClick);
+    return Pattern.makePatternFromCells(cells, onCellClick);
 }
 // Given a cell id from the page in form rowX_colY, where X represents the row index and Y represents the column index, return an object containing X and Y
 export function getIndicesFromID(stringID) {

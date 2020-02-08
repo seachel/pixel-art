@@ -11,35 +11,35 @@ import { names, defaults } from './application-constants.js';
 // Pattern data
 // -------
 
-/// A function to make a pattern given the height and width of the grid
-export function makePatternFromDimensions(height : number, width : number, onCellClick : (e : Event) => void) : Pattern
-{
-	let pattern = new Pattern(onCellClick);
-
-	pattern.initializePatternFromDimensions(height, width);
-
-	return pattern;
-}
-
-/// A function to make a pattern given the cells
-// TODO: what to do when there are more fields in the pattern? something to read the pattern and pass that object in? Given a pattern, update the state and view?
-export function makePatternFromCells(cells : string[][], onCellClick : (e : Event) => void) : Pattern
-{
-	let pattern = new Pattern(onCellClick);
-
-	pattern.InitializePatternFromCells(cells);
-
-	return pattern;
-}
-
 export class Pattern
 {
 	cells : string[][];
 	onCellClick : (e : Event) => void
 
-	constructor(onCellClick : (e : Event) => void)
+	private constructor(onCellClick : (e : Event) => void)
 	{
 		this.onCellClick = onCellClick;
+	}
+
+	/// A function to make a pattern given the cells
+	// TODO: what to do when there are more fields in the pattern? something to read the pattern and pass that object in? Given a pattern, update the state and view?
+	public static makePatternFromCells(cells : string[][], onCellClick : (e : Event) => void) : Pattern
+	{
+		let pattern = new Pattern(onCellClick);
+
+		pattern.initializePatternFromCells(cells);
+
+		return pattern;
+	}
+
+	/// A function to make a pattern given the height and width of the grid
+	public static makePatternFromDimensions(height : number, width : number, onCellClick : (e : Event) => void) : Pattern
+	{
+		let pattern = new Pattern(onCellClick);
+
+		pattern.initializePatternFromDimensions(height, width);
+
+		return pattern;
 	}
 
 	// Note:
@@ -58,7 +58,7 @@ export class Pattern
 		this.initializePatternView(height, width);
 	}
 
-	public InitializePatternFromCells(cells : string[][])
+	public initializePatternFromCells(cells : string[][])
 	{
 		this.cells = cells;
 
