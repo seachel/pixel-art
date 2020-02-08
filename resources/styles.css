@@ -7,6 +7,13 @@ HTML, body
 	border: 0px;
 }
 
+#header
+{
+	display: flex;
+	justify-content: center;
+	padding: 10px 0;
+}
+
 #app-content
 {
 	display: flex;
