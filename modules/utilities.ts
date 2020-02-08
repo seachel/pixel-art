@@ -7,3 +7,10 @@ export function verifyAndCastToNumber(inputValue : string) : number
 
 	return Number(inputValue);
 }
+
+export function getStringFromInputID(elementID : string) : string
+{
+	let inputElement = <HTMLInputElement> document.getElementById(elementID)
+
+	return inputElement.value;
+}

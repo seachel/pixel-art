@@ -4,3 +4,7 @@ export function verifyAndCastToNumber(inputValue) {
     assertion.isNum(inputValue);
     return Number(inputValue);
 }
+export function getStringFromInputID(elementID) {
+    let inputElement = document.getElementById(elementID);
+    return inputElement.value;
+}

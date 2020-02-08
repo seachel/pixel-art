@@ -13,13 +13,9 @@ import * as Utilities from './modules/utilities.js';
 // Constructs a new pattern object according to the input dimensions on the page
 function createNewPatternFromInputs() : Pattern
 {
-	// Get elements containing dimension inputs and assign to input element type
-	let patternHeightInputElement = <HTMLInputElement> document.getElementById(names.patternHeight);
-	let patternWidthInputElement = <HTMLInputElement> document.getElementById(names.patternWidth);
-
-	// Get input values as strings
-	let patternHeightInput : string = patternHeightInputElement.value;
-	let patternWidthInput : string = patternWidthInputElement.value;
+	// Get input values for height and width as strings
+	let patternHeightInput : string = Utilities.getStringFromInputID(names.patternHeight);
+	let patternWidthInput : string = Utilities.getStringFromInputID(names.patternWidth)
 
 	//
 	let patternHeight : number = Utilities.verifyAndCastToNumber(patternHeightInput);
@@ -27,7 +23,6 @@ function createNewPatternFromInputs() : Pattern
 
 	return Core.createNewPattern(patternHeight, patternWidth, onCellClick);
 }
-
 
 
 // applies the current brush to the passed cell element and its corresponding element in the data grid
@@ -62,15 +57,27 @@ function setBrush(brush : string)
 // TODO: separate function in core later to build item to save
 function savePattern()
 {
+	// TODO: better place to set the title?
+	let title = Utilities.getStringFromInputID(names.pattern_name);
+	State.getCurrentState().displayPattern.title = title;
+
+	writeDebug(title, "Input title:");
+
 	let fileString = JSON.stringify(State.getCurrentState().displayPattern);
 
-	window.localStorage.setItem("saved pattern", fileString);
+	// TODO: if not input, default title
+	// TODO: test that there is always a title
+	window.localStorage.setItem(title, fileString);
 }
 
 // Reads the pattern from local storage
 function loadPattern()
 {
-	let fileString = window.localStorage.getItem("saved pattern");
+	// TODO: use title in the input to search for title as key in the saved objects?
+	let title = Utilities.getStringFromInputID(names.pattern_name);
+
+	// look up the saved pattern object that matches the title in the corresponding input element
+	let fileString = window.localStorage.getItem(title);
 
 	// TODO: check that valid JSON?
 	// TODO: check that parsed JSON has the desired fields?
@@ -78,17 +85,15 @@ function loadPattern()
 	// TODO: it's possible to update the display pattern here, but it doesn't update the field on currentState and doesn't cause any persistent update to the model; need function to update it, and make the field private? then this function should be outside?
 	// NOTE: need to verify the structure of the parsed string, and make a new pattern? use createNewPattern?
 
-	var loadedPattern = JSON.parse(fileString);
-
-	writeDebug(loadedPattern, "Loaded pattern:");
+	let loadedPattern = JSON.parse(fileString);
 
 	// TODO: create new pattern from passed?
 	// TODO: parse loaded pattern and verify that it has a cells field
 	// TODO: bad; find better way to make new pattern, parsing in saved string
-	var newCells = loadedPattern["cells"];
+	let newCells = loadedPattern["cells"];
 
 	// TODO: still doesn't update the view
-	State.getCurrentState().displayPattern = Pattern.makePatternFromCells(newCells, onCellClick);
+	State.getCurrentState().displayPattern = Pattern.makePatternFromCells(newCells, onCellClick, title);
 }
 
 

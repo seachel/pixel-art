@@ -13,19 +13,32 @@ import { names, defaults } from './application-constants.js';
 
 export class Pattern
 {
+	private _title : string;
+	get title()
+	{
+		return this._title;
+	}
+	set title(value)
+	{
+		this._title = value;
+	}
+
 	cells : string[][];
+
 	onCellClick : (e : Event) => void
 
-	private constructor(onCellClick : (e : Event) => void)
+	private constructor(onCellClick : (e : Event) => void, title : string)
 	{
 		this.onCellClick = onCellClick;
+
+		this._title = title;
 	}
 
 	/// A function to make a pattern given the cells
 	// TODO: what to do when there are more fields in the pattern? something to read the pattern and pass that object in? Given a pattern, update the state and view?
-	public static makePatternFromCells(cells : string[][], onCellClick : (e : Event) => void) : Pattern
+	public static makePatternFromCells(cells : string[][], onCellClick : (e : Event) => void, title = "untitled") : Pattern
 	{
-		let pattern = new Pattern(onCellClick);
+		let pattern = new Pattern(onCellClick, title);
 
 		pattern.initializePatternFromCells(cells);
 
@@ -33,9 +46,9 @@ export class Pattern
 	}
 
 	/// A function to make a pattern given the height and width of the grid
-	public static makePatternFromDimensions(height : number, width : number, onCellClick : (e : Event) => void) : Pattern
+	public static makePatternFromDimensions(height : number, width : number, onCellClick : (e : Event) => void, title = "untitled") : Pattern
 	{
-		let pattern = new Pattern(onCellClick);
+		let pattern = new Pattern(onCellClick, title);
 
 		pattern.initializePatternFromDimensions(height, width);
 
