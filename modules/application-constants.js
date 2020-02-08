@@ -13,6 +13,7 @@ export const names = {
     button_loadPattern: "btn_load-pattern",
     appContainer: "app-content",
     region_settings: "region-settings",
+    pattern_name: "pattern-name",
     region_pattern: "region-pattern",
     region_brush: "region-brush",
     errorDisplay: "error-display",

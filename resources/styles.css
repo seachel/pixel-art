@@ -26,6 +26,13 @@ HTML, body
 	flex-basis: 20%;
 }
 
+.section-column
+{
+	display: flex;
+	flex-direction: column;
+	padding: 10px 0;
+}
+
 #region-pattern
 {
 	background: rgb(255, 255, 164);
